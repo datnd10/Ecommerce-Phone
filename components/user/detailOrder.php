@@ -96,11 +96,6 @@
             flex-wrap: wrap;
         }
 
-        img {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-        }
 
         figcaption {
             text-align: center;
@@ -283,6 +278,7 @@
                 },
                 success: (response) => {
                     let data = JSON.parse(response)[0];
+                    console.log(data.product_color_id);
                     $('#productColorId').val(data.product_color_id);
                     $('.productName').html(data.product_name);
                     $('.price').html('$' + data.price);
@@ -334,7 +330,7 @@
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-3">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">$ ${item.price}</p>
+                                                <p class="sherah-table__product-desc">${item.price} đ</p>
                                             </div>
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-4">
@@ -344,7 +340,7 @@
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-5">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">$ ${item.quantity * item.price}</p>
+                                                <p class="sherah-table__product-desc">${item.quantity * item.price} đ</p>
                                             </div>
                                         </td>`
                             if (data.information[0].status == 'received') {
@@ -356,9 +352,9 @@
                             totalPrice += +item.quantity * +item.price;
                             $('.bodyTable').append(html);
                         })
-                        $('.totalPrice').html('$' + totalPrice);
-                        $('.shipvalue').html('$' + data.information[0].shipping);
-                        $('.totalPriceAndShip').html('$' + data.information[0].total_money);
+                        $('.totalPrice').html(totalPrice +" đ");
+                        $('.shipvalue').html(data.information[0].shipping+" đ");
+                        $('.totalPriceAndShip').html(data.information[0].total_money+" đ");
                         $('.customerName').html(data.information[0].name);
                         $('.phone').html(data.information[0].phone);
                         $('.gmail').html(decodedSessionValue.email);
@@ -406,7 +402,7 @@
         $('.updateBtn').on('click', () => {
             let listImages = $('#file-input')[0].files;
             const data = new FormData();
-            data.append('id', $('.productId').val());
+            data.append('id', $('#productColorId').val());
             data.append('description', $('#description').val());
             data.append('rate', $('.ratingStar:checked').val());
             for (let i = 0; i < listImages.length; i++) {

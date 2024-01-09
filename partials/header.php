@@ -19,7 +19,7 @@
         </div>
 
         <div class="search col-md-6">
-            <input type="text" placeholder="Tìm kiếm sản phẩm..." style="padding: 10px 15px; width: 600px">
+            <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." style="padding: 10px 15px; width: 600px">
         </div>
 
         <?php
@@ -84,4 +84,12 @@
             })
         }
     }
+
+    const btnSearch = document.querySelector('#search');
+    btnSearch.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            viewAll();
+        }
+    });
+
 </script>

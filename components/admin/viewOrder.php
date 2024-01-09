@@ -285,13 +285,6 @@
                                                         </div>
                                                         <p class="text">Nhận Hàng</p>
                                                     </li>
-                                                    <li class="step step-5">
-                                                        <i class="icon uil mdi mdi-star"></i>
-                                                        <div class="linebar five">
-                                                            <i class="mdi mdi-check"></i>
-                                                        </div>
-                                                        <p class="text">Đánh Giá</p>
-                                                    </li>
                                                 </ul>
 
                                                 <ul class="head-2 d-none">
@@ -412,7 +405,7 @@
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-3">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">$ ${item.price}</p>
+                                                <p class="sherah-table__product-desc">${item.price} đ</p>
                                             </div>
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-4">
@@ -422,16 +415,16 @@
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-5">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">$ ${item.quantity * item.price}</p>
+                                                <p class="sherah-table__product-desc">${item.quantity * item.price} đ</p>
                                             </div>
                                         </td>
                                     </tr>`
                             totalPrice += +item.quantity * +item.price;
                             $('.bodyTable').append(html);
                         })
-                        $('.totalPrice').html('$' + totalPrice);
-                        $('.shipvalue').html('$' + data.information[0].shipping);
-                        $('.totalPriceAndShip').html('$' + data.information[0].total_money);
+                        $('.totalPrice').html(totalPrice +" đ");
+                        $('.shipvalue').html(data.information[0].shipping+" đ");
+                        $('.totalPriceAndShip').html(data.information[0].total_money+" đ");
                         $('.customerName').html(data.information[0].name);
                         $('.phone').html(data.information[0].phone);
                         $('.gmail').html(data.information[0].email);
@@ -459,11 +452,6 @@
                                 $(".head").removeClass("d-none");
                                 $(".head-2").addClass("d-none")
                                 activateStep(3);
-                                break;
-                            case 'reviewed':
-                                $(".head").removeClass("d-none");
-                                $(".head-2").addClass("d-none")
-                                activateStep(4);
                                 break;
                             case 'canceled':
                                 $(".head").addClass("d-none")

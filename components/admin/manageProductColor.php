@@ -110,7 +110,8 @@
                                                 <th>Màu</th>
                                                 <th>Giá</th>
                                                 <th>Số Lượng</th>
-                                                <th>Số Lượng Bán</th>
+                                                <th>Lượng Bán</th>
+                                                <th>Doanh Thu</th>
                                                 <th>Trạng thái</th>
                                                 <th>Hành Động</th>
                                             </tr>
@@ -245,13 +246,14 @@
                     const data = JSON.parse(response);
 
                     data.forEach((category) => {
-                        let item = {
-                            id: category.category_id,
-                            name: category.category_name,
-                        };
-                        targetArray.push(item);
+                        if (category.is_active == 1) {
+                            let item = {
+                                id: category.category_id,
+                                name: category.category_name,
+                            };
+                            targetArray.push(item);
+                        }
                     });
-
                     const optionsHtml = targetArray.map((category) => `<option value="${category.id}">${category.name}</option>`).join('');
                     $('#category').append(optionsHtml);
                 }
@@ -308,7 +310,7 @@
                                                     <span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${item.color}</span>
                                                 </td>
                                                 <td>
-                                                    <span>$${item.price}</span>
+                                                    <span>$ ${item.price}</span>
                                                 </td>
                                                 <td>
                                                     <span>${item.quantity}</span>
@@ -317,7 +319,10 @@
                                                     <span>${item.sold_quantity}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.is_active}</span>
+                                                    <span>${item.sold_quantity * item.price} đ</span>
+                                                </td>
+                                                <td>
+                                                    <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ? "Hoạt Động" : "Đã Khóa"}</span>
                                                 </td>
                                                 <td>
                                                     <div class="userEmail">
@@ -426,6 +431,7 @@
                         numOfFiles.empty();
                         numOfFiles.append(`${images.length} files chosen`);
                     }
+                    console.log(listImageOld);
                 }
             });
         };

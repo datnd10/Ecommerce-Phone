@@ -56,43 +56,64 @@
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                     <form>
                         <!-- Email input -->
-                        <div class="form-outline mb-4">
-                            <label class="form-label" for="email">
+                        <div class="form-group mb-4">
+                            <label for="email" class="d-flex gap-2">
                                 <span>Email</span>
                                 <span class="text-danger d-none signInFail">Email hoặc mật khẩu không đúng</span>
                             </label>
-                            <input type="email" id="email" class="form-control form-control-lg" placeholder="Email" />
 
+                            <input type="email" id="email" class="form-control form-control-lg" placeholder="Email">
                         </div>
 
                         <!-- Password input -->
-                        <div class="form-outline mb-3">
-                            <label class="form-label" for="password">Mật Khẩu</label>
-                            <input type="password" id="password" class="form-control form-control-lg" placeholder="Mật Khẩu" />
-
+                        <div class="form-group mb-3">
+                            <label for="password">Mật Khẩu</label>
+                            <input type="password" id="password" class="form-control form-control-lg" placeholder="Mật Khẩu">
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
                             <!-- Checkbox -->
                             <div class="form-check mb-0">
-                                <input class="form-check-input me-2" type="checkbox" value="" id="remember-me" />
-                                <label class="form-check-label" for="remember-me">
-                                    Ghi Nhớ Đăng Nhập
-                                </label>
+                                <input class="form-check-input" type="checkbox" value="" id="remember-me" style="margin-left: 5px;">
+                                <label class="form-check-label" for="remember-me">Ghi Nhớ Đăng Nhập</label>
                             </div>
-                            <a href="#!" class="text-body">Quên Mật Khẩu?</a>
+                            <a class="text-body btn" id="forgotPassword" data-bs-toggle="modal" data-bs-target="#exampleModal">Quên Mật Khẩu?</a>
                         </div>
 
                         <div class="text-center text-lg-start mt-4 pt-2">
                             <button type="button" class="btn btn-primary btn-lg signInBtn" style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
-                            <p class="small fw-bold mt-2 pt-1 mb-0">Chưa Có Tài Khoản? <a href="signUp.php" class="link-danger"> Đăng Kí</a></p>
+                            <p class="small fw-bold mt-2 pt-1 mb-0">Chưa Có Tài Khoản? <a href="signUp.php" class="link-danger">Đăng Kí</a></p>
                         </div>
                     </form>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Quên Mật Khẩu</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="align-items-center mb-4">
+                                        <div class="form-outline flex-fill mb-0">
+                                            <label class="form-label" for="emailGetPass">
+                                                <span>Nhập Email:</span>
+                                                <span id="wrongEmail" class="text-danger d-none ml-3">Email Không Đúng</span>
+                                            </label>
+                                            <input type="text" id="emailGetPass" class="form-control" placeholder="Nhập Email của bạn" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-primary sendRequest">Gửi</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
     </section>
     </div>
-
     <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
@@ -107,12 +128,12 @@
     <!-- Custom js for this page -->
     <script src="../../assets/js/dashboard.js"></script>
     <script src="../../assets/js/todolist.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             $(".signInBtn").click(function() {
                 var checkbox = $("#remember-me")[0];
-                var addForm = $("#addForm")[0];
-                var data = new FormData(addForm);
+                var data = new FormData();
                 data.append('email', $('#email').val());
                 data.append('password', $('#password').val());
                 data.append('remember', checkbox.checked);
@@ -130,12 +151,41 @@
                                 window.location.href = 'home.php';
                                 break;
                             default:
+                                $('#password').val('');
                                 $(".signInFail").removeClass('d-none').addClass('d-block');
                                 break;
                         }
                     }
                 });
             });
+            $('.sendRequest').click(function() {
+                var data = new FormData();
+                data.append('email', $('#emailGetPass').val());
+                data.append('action', "forgotPassword");
+                $.ajax({
+                    url: 'http://localhost:3000/components/sendMail.php',
+                    type: 'POST',
+                    data: data,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        console.log(response);
+                        switch(response){
+                            case "success":
+                                $('#wrongEmail').addClass('d-none');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Mật khẩu đã được gửi đến gmail. Kiểm Tra Gmail Của bạn",
+                                    confirmButtonText: 'Ok',
+                                })
+                                break;
+                            default:
+                                $('#wrongEmail').removeClass('d-none');
+                                break;
+                        }
+                    }
+                });
+            })
         });
     </script>
 </body>

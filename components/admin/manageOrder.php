@@ -220,6 +220,7 @@
                                                 <th scope="col">Tên Khách</th>
                                                 <th scope="col">Ngày Đặt</th>
                                                 <th scope="col">Tổng tiền</th>
+                                                <th scope="col">Phương Thức</th>
                                                 <th scope="col">Thanh Toán</th>
                                                 <th scope="col">Trạng Thái</th>
                                                 <th scope="col">Hành Động</th>
@@ -274,13 +275,6 @@
                                                 <i class="mdi mdi-check"></i>
                                             </div>
                                             <p class="text">Nhận Hàng</p>
-                                        </li>
-                                        <li class="step step-5">
-                                            <i class="icon uil mdi mdi-star"></i>
-                                            <div class="linebar five">
-                                                <i class="mdi mdi-check"></i>
-                                            </div>
-                                            <p class="text">Đánh Giá</p>
                                         </li>
                                     </ul>
 
@@ -342,9 +336,6 @@
                 case 3:
                     $('#status').val('received');
                     break;
-                case 4:
-                    $('#status').val('reviewed');
-                    break;
                 default:
                     $('#status').val('Trạng thái không xác định');
             }
@@ -391,9 +382,6 @@
                                 case 'received':
                                     status = 'Đã nhận';
                                     break;
-                                case 'reviewed':
-                                    status = 'Đánh giá';
-                                    break;
                                 case 'canceled':
                                     status = 'Đã Hủy';
                                     break;
@@ -411,10 +399,13 @@
                                                     <span>${item.created_at}</span>
                                                 </td>
                                                 <td>
-                                                    <span>$ ${item.total_money}</span>
+                                                    <span>${item.total_money} đ</span>
                                                 </td>
                                                 <td>
-                                                    <span>paid</span>
+                                                    <span>${item.payment_method}</span>
+                                                </td>
+                                                <td>
+                                                    <span class = "${item.payment_status === 'paid' ? "text-success" : "text-danger"}">${item.payment_status}</span>
                                                 </td>
                                                 <td>
                                                     <span>${status}</span>
@@ -466,11 +457,6 @@
                             $(".head-2").addClass("d-none")
                             activateStep(3);
                             break;
-                        case 'reviewed':
-                            $(".head").removeClass("d-none");
-                            $(".head-2").addClass("d-none")
-                            activateStep(4);
-                            break;
                         case 'canceled':
                             $(".head").addClass("d-none")
                             $(".head-2").removeClass("d-none")
@@ -490,10 +476,11 @@
                 'action': 'updateStatus',
             }
             $.ajax({
-                url: 'http://localhost:3000/database/controller/orderController.php',
+                url: 'http://localhost:3000/components/sendMail.php',
                 type: 'POST',
                 data: data,
                 success: (response) => {
+                    console.log(response);
                     switch (response) {
                         case "success":
                             Swal.fire({

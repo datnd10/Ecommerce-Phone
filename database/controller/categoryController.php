@@ -1,7 +1,13 @@
 <?php
 include '../config.php';
 if (isset($_GET['action']) && $_GET['action'] == 'view') {
-    $sql = "SELECT * FROM category ";
+    $sql = "SELECT c.category_id, c.category_name, c.description,c.is_active, c.created_at, SUM(pc.sold_quantity) AS total_sold_quantity,
+    COUNT(pc.product_color_id) AS total_product_colors,
+    SUM(pc.sold_quantity * pc.price) AS total_revenue
+    FROM category AS c
+    LEFT JOIN product AS p ON c.category_id = p.category_id
+    LEFT JOIN product_color AS pc ON p.product_id = pc.product_id
+    GROUP BY c.category_id, c.category_name, c.description";
     $data = Query($sql, $connection);
     $output = '';
     if (empty($data)) {
@@ -29,9 +35,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'addCategory') {
 
 
 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-    $id = $_GET['id'];
-    $sql = "DELETE FROM category WHERE category_id = '$id'; ";
-    $data = Query($sql, $connection);
+    $category_id = $_GET['id'];
+    echo $category_id;
+    $sqlProductColor = "UPDATE product_color SET is_active = 0 WHERE product_id IN (SELECT product_id FROM product WHERE category_id = $category_id)";
+    $dataProductColor = Query($sqlProductColor, $connection);
+    $sqlProduct = "UPDATE product SET is_active = 0 WHERE category_id = $category_id";
+    $dataProduct = Query($sqlProduct, $connection);
+    $sqlCategory = "UPDATE category SET is_active = 0 WHERE category_id = $category_id";
+    $dataCategory = Query($sqlCategory, $connection);
     echo "success";
 }
 

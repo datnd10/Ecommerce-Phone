@@ -84,7 +84,6 @@
                                                     <span id="wrongPassword" class="text-danger d-none">Mật khẩu ít nhất 6 kí tự bao gồm chữ và số</span>
                                                 </label>
                                                 <input type="password" id="password" class="form-control" placeholder="Mật Khẩu" />
-
                                             </div>
                                         </div>
 
@@ -98,7 +97,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                            <button type="button" class="btn btn-primary btn-lg signUpBtn">Register</button>
+                                            <button type="button" class="btn btn-primary btn-lg signUpBtn">Đăng Kí</button>
                                         </div>
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                             <p class="small fw-bold mt-2 pt-1 mb-0">Đã Có Tài Khoản? <a href="signIn.php" class="link-danger"> Đăng Nhập</a></p>
@@ -107,6 +106,38 @@
                                 </div>
                                 <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary d-none" id="verify" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Launch demo modal
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Xác Thực Tài Khoản</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="align-items-center mb-4">
+                                            <div class="form-outline flex-fill mb-0">
+                                                <label class="form-label" for="code">
+                                                    <span>Nhập Mã Xác Thực:</span>
+                                                    <span id="wrongCode" class="text-danger d-none ml-3">Mã Xác Thực Không Đúng</span>
+                                                </label>
+                                                <input type="text" id="code" class="form-control" placeholder="Nhập Mã Xác Thực" />
+                                            </div>
+                                            <button class="btn btn-info mt-4 text-center" id="refreshToken">Gửi Lại Mã Xác Nhận</button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-primary verifyBtn">Xác Thực</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -181,7 +212,7 @@
                         data.append('password', $('#password').val());
                         data.append('action', 'signUp');
                         $.ajax({
-                            url: 'http://localhost:3000/database/controller/userController.php',
+                            url: 'http://localhost:3000/components/sendMail.php',
                             type: 'POST',
                             data: data,
                             contentType: false,
@@ -190,18 +221,7 @@
                                 console.log(response);
                                 switch (response) {
                                     case 'success':
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Đăng Ký Thành Công',
-                                            confirmButtonText: 'Đăng Nhập',
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.open('signIn.php', '_self');
-                                            }
-                                        });
-                                        setTimeout(function() {
-                                            window.location.href = 'signIn.php';
-                                        }, 2000);
+                                        $('#verify').click();
                                         break;
                                     default:
                                         existEmail.toggleClass('d-none', !response.includes('existemail'));
@@ -219,6 +239,86 @@
                     }
                 }
             });
+
+            $('#refreshToken').click(function() {
+                const data = new FormData();
+                data.append('email', $('#email').val());
+                data.append('username', $('#username').val());
+                data.append('action', 'refreshToken');
+                $.ajax({
+                    url: 'http://localhost:3000/components/sendMail.php',
+                    type: 'POST',
+                    data: data,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        console.log(response);
+                        switch (response) {
+                            case 'success':
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Gửi Lại Thành Công. Kiểm Tra Gmail Của bạn",
+                                    confirmButtonText: 'Ok',
+                                })
+                                break;
+                            default:
+                                Swal.fire({
+                                    title: 'Có gì đó sai sót',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                });
+                                break;
+                        }
+                    },
+                });
+            })
+
+            $('.verifyBtn').click(function() {
+                const data = new FormData();
+                data.append('email', $('#email').val());
+                data.append('username', $('#username').val());
+                data.append('action', 'verifyToken');
+                $.ajax({
+                    url: 'http://localhost:3000/components/sendMail.php',
+                    type: 'POST',
+                    data: data,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        let result = JSON.parse(response);
+                        if (+result[0].token == +$('#code').val()) {
+                            $('#wrongCode').addClass('d-none');
+                            const dataSend = {
+                                email: $('#email').val(),
+                                username: $('#username').val(),
+                                action: 'updateStatusAccount',
+                            }
+                            $.ajax({
+                                url: 'http://localhost:3000/components/sendMail.php',
+                                type: 'POST',
+                                data: dataSend,
+                                success: function(response) {
+                                    console.log(response);
+                                    switch (response) {
+                                        case 'success':
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: "Xác Thực Thành Công",
+                                                confirmButtonText: 'Ok',
+                                            })
+                                            setTimeout(function() {
+                                                window.location.href = 'signIn.php';
+                                            }, 2000);
+                                            break;
+                                    }
+                                }
+                            })
+                        } else {
+                            $('#wrongCode').removeClass('d-none');
+                        }
+                    },
+                });
+            })
         });
     </script>
 </body>

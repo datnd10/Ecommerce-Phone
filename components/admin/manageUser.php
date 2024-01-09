@@ -65,7 +65,7 @@
                                                 <th>Tên</th>
                                                 <th>Email</th>
                                                 <th>Số Đơn</th>
-                                                <th>SĐT</th>
+                                                <th>Tổng tiền</th>
                                                 <th>Trạng thái</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Hành Động</th>
@@ -226,13 +226,13 @@
                                                     <span>${item.email}</span>
                                                 </td>
                                                 <td>
-                                                    <span>2</span>
+                                                    <span>${item.total_orders}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.phone}</span>
+                                                    <span>${item.total_amount ? item.total_amount : 0} đ</span>
                                                 </td>
                                                 <td>
-                                                    <span>active</span>
+                                                    <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ?"Hoạt Động":"Đã Khóa"}</span>
                                                 </td>
                                                 <td>
                                                     <span>${item.created_at}</span>

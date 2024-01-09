@@ -55,10 +55,10 @@
                                             <tr>
                                                 <th>Tên</th>
                                                 <th>Nhãn Hàng</th>
-                                                <th>Mô Tả</th>
                                                 <th>Tổng Bán</th>
+                                                <th>Tổng Doanh Thu</th>
                                                 <th>Đánh giá</th>
-                                                <th>Trạng thái</th>
+                                                <th>Trạng Thái</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Hành Động</th>
                                             </tr>
@@ -86,6 +86,7 @@
                                     <div class="col-md-6">
                                         <label for="category" class="form-label">Tên Nhãn Hàng:</label>
                                         <select id="category" class="form-select form-select-lg">
+                                        <option value="">Chọn Nhãn Hàng</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -142,14 +143,14 @@
                     const data = JSON.parse(response);
 
                     data.forEach((category) => {
-                        let item = {
-                            id: category.category_id,
-                            name: category.category_name,
-                        };
-
-                        targetArray.push(item);
+                        if (category.is_active == 1) {
+                            let item = {
+                                id: category.category_id,
+                                name: category.category_name,
+                            };
+                            targetArray.push(item);
+                        }
                     });
-
                     const optionsHtml = targetArray.map((category) => `<option value="${category.id}">${category.name}</option>`).join('');
                     $('#category').append(optionsHtml);
                     console.log(targetArray);
@@ -173,30 +174,29 @@
                     } else {
                         $('.bodyTable').empty();
                         data.forEach(function(item) {
-                            console.log(item.rate);
-                            const filledStars = Array.from({length: item.rate}, () => '<i class="mdi mdi-star-outline" style="color: #FA8232"></i>');
-                            const emptyStars = Array.from({length: 5 - item.rate}, () => '<i class="mdi mdi-star-outline"></i>');
+                            console.log(item);
+                            const filledStars = Array.from({length: item.average_rating}, () => '<i class="mdi mdi-star" style="color: #FA8232"></i>');
+                            const emptyStars = Array.from({length: 5 - item.average_rating}, () => '<i class="mdi mdi-star"></i>');
                             const starsHtml = filledStars.concat(emptyStars).join('');
-                            const category = categoryArray.find(category => category.id === item.category_id);
                             let html = `<tr>
+                                                <td>
+                                                    <span>${item.category_name}</span>
+                                                </td>
                                                 <td>
                                                     <span>${item.product_name}<span>
                                                 </td>
                                                 <td>
-                                                    <span>${category ? category.name : ''}</span>
+                                                    <span>${item.total_sales ? item.total_sales : 0}</span>
                                                 </td>
                                                 <td>
-                                                    <span class="d-inline-block text-truncate" style="max-width: 400px">${item.description}</span>
-                                                </td>
-                                                <td>
-                                                    <span>2</span>
+                                                    <span>${item.total_revenue ? item.total_revenue : 0} đ</span>
                                                 </td>
                                                 <td>
                                                     <span>${starsHtml}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.is_active}</span>
-                                                </td>
+                                                    <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ? "Hoạt Động" : "Đã Khóa"}</span>
+                                                </td>   
                                                 <td>
                                                     <span>${item.created_at}</span>
                                                 </td>

@@ -65,8 +65,9 @@
                                                 <th>Tên</th>
                                                 <th>Mô Tả</th>
                                                 <th>Tổng Bán</th>
-                                                <th>Tổng sản Phẩm</th>
-                                                <th>Trạng thái</th>
+                                                <th>Tổng sản phẩm</th>
+                                                <th>Tổng Doanh Thu</th>
+                                                <th>Trạng Thái</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Hành Động</th>
                                             </tr>
@@ -158,13 +159,16 @@
                                                     <span>${item.description}</span>
                                                 </td>
                                                 <td>
-                                                    <span>2</span>
+                                                    <span>${item.total_sold_quantity ? item.total_sold_quantity : 0}</span>
                                                 </td>
                                                 <td>
-                                                    <span>3</span>
+                                                    <span>${item.total_product_colors}</span>
                                                 </td>
                                                 <td>
-                                                    <span>active</span>
+                                                    <span>${item.total_revenue ? item.total_revenue : 0} đ</span>
+                                                </td>
+                                                <td>
+                                                    <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ? "Hoạt Động" : "Đã Khóa"}</span>
                                                 </td>
                                                 <td>
                                                     <span>${item.created_at}</span>
@@ -203,6 +207,7 @@
                             id: id
                         },
                         success: (response) => {
+                            console.log(response);
                             Swal.fire({
                                 title: 'Xóa thành công',
                                 icon: 'success'

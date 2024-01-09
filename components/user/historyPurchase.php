@@ -118,7 +118,7 @@
                                                 <span>${item.created_at}</span>
                                                 </td>
                                                 <td>
-                                                    <span>$${item.total_money}</span>
+                                                    <span>${item.total_money} đ</span>
                                                 </td>
                                                 <td>
                                                     <span>Đã Thanh Toán</span>
@@ -157,7 +157,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: 'http://localhost:3000/database/controller/orderController.php',
+                        url: 'http://localhost:3000/components/sendMail.php',
                         type: 'GET',
                         data: {
                             action: "delete",

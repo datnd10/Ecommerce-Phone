@@ -39,9 +39,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'getProducts') {
 
 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
     $id = $_GET['id'];
-    $sql1 = "DELETE FROM product_image WHERE product_color_id = '$id'; ";
-    $data1 = Query($sql1, $connection);
-    $sql = "DELETE FROM product_color WHERE product_color_id = '$id'; ";
+    $sql = "UPDATE product_color SET is_active = 0 WHERE product_color_id = $id";
     $data = Query($sql, $connection);
     echo "success";
 }

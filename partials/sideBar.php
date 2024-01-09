@@ -2,6 +2,7 @@
   <ul class="nav">
     <li class="nav-item nav-profile">
       <a href="#" class="nav-link">
+
         <div class="nav-profile-image">
           <img src="../../assets/images/faces/face1.jpg" alt="profile">
           <span class="login-status online"></span>
@@ -47,15 +48,9 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="pages/tables/basic-table.html">
+      <a class="nav-link" href="manageReview.php">
         <span class="menu-title">Quản Lý Đánh Giá</span>
         <i class="mdi mdi-comment-processing menu-icon"></i>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="pages/forms/basic_elements.html">
-        <span class="menu-title">Hỗ Trợ Liên Hệ</span>
-        <i class="mdi mdi-phone-outgoing menu-icon"></i>
       </a>
     </li>
   </ul>

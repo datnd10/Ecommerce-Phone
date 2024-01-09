@@ -27,7 +27,7 @@
                 <div class="col-md-6">
                     <!-- SHIPPING METHOD -->
                     <div class="card">
-                        <div class="card-header bg-light" style="font-size: 22px; color: chocolate; font-weight: bold">Information Customer</div>
+                        <div class="card-header bg-light" style="font-size: 22px; color: chocolate; font-weight: bold">Thông Tin Người Mua</div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <label for="Name" class="form-label" style="font-weight: bold">Tên Người Nhận:</label>
@@ -61,6 +61,13 @@
                             <div class="mb-3">
                                 <label for="Message" class="form-label" style="font-weight: bold">Lời Nhắn:</label>
                                 <input type="text" class="form-control" id="Message" placeholder="Message" value="" name="message">
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment" class="form-label" style="font-weight: bold">Phương Thức Thanh Toán:</label>
+                                <select id="payment" class="form-select" name="payment">
+                                    <option value="cod">Thanh Toán Nhận Hàng</option>
+                                    <option value="banking">Thanh Qua Ngân Hàng</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -111,8 +118,8 @@
                     <!-- REVIEW ORDER -->
                     <div class="card">
                         <div class="card-header d-flex align-items-center justify-content-between">
-                            <div style="font-size: 22px;color: chocolate;font-weight: bold">Review Order</div>
-                            <a href=" cart.php" style="font-size: 14px;text-align: center;text-decoration: none;color: green;font-weight: bold">Edit Cart</a>
+                            <div style="font-size: 22px;color: chocolate;font-weight: bold">Giỏ Hàng</div>
+                            <a href=" cart.php" style="font-size: 14px;text-align: center;text-decoration: none;color: green;font-weight: bold">Sửa Giỏ Hàng</a>
                         </div>
                         <div class="card-body">
                             <div class="form-group listItem">
@@ -120,22 +127,22 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-12">
-                                    <strong>Order</strong>
-                                    <span class="float-end" style="font-weight: bold"><span>$</span><span class="totalPrice"></span></span>
+                                    <strong>Tiền Hàng</strong>
+                                    <span class="float-end" style="font-weight: bold"><span class="totalPrice"></span></span>
                                 </div>
                                 <div class="col-12">
-                                    <strong>Shipping</strong>
-                                    <span class="float-end" style="font-weight: bold"><span>$</span><span class="shipvalue"></span></span>
+                                    <strong>Tiền Ship</strong>
+                                    <span class="float-end" style="font-weight: bold"><span class="shipvalue"></span></span>
                                 </div>
                                 <div class="col-12">
-                                    <strong>Order Total</strong>
-                                    <span class="float-end" style="font-weight: bold"><span>$</span><span class="totalPriceAndShip"></span></span>
+                                    <strong>Tổng Tiền</strong>
+                                    <span class="float-end" style="font-weight: bold"><span class="totalPriceAndShip"></span></span>
                                     <input type="text" id="totalOrder" value="" hidden="">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <button type="button" style="background-color: #ee4d2d; color: white; padding: 13px 26px" class="btn float-end submitBtn">Purchase</button>
+                    <button type="button" style="background-color: #ee4d2d; color: white; padding: 13px 26px" class="btn float-end submitBtn">Thanh Toán</button>
                 </div>
             </form>
         </div>
@@ -173,8 +180,8 @@
             const selectedOption = shipping.find('option:selected');
             const selectedOptionClassName = selectedOption.prop('class');
 
-            $('.shipvalue').html(selectedOptionClassName);
-            totalPriceAndShip.empty().append(total + (+selectedOptionClassName));
+            $('.shipvalue').html(selectedOptionClassName + "đ");
+            totalPriceAndShip.empty().append(total + (+selectedOptionClassName) +" đ");
             totalInput.val(total + (+selectedOptionClassName));
             totalOrder.val(totalPriceAndShip.html());
         };
@@ -204,10 +211,10 @@
                                             <span style="font-weight: lighter ;font-style: normal">${item.dataProductColor[0].color}</span>
                                         </small>
                                         </div>
-                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Price: <span style="font-weight: lighter ;font-style: normal">$${item.dataProductColor[0].price}</span></small></div>
+                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Price: <span style="font-weight: lighter ;font-style: normal">${item.dataProductColor[0].price} đ</span></small></div>
                                     </div>
                                     <div class="col-sm-3 col-3 text-end">
-                                        <h6><span>$</span><span class="price">${item.dataProductColor[0].price * item.quantity}</span></h6>
+                                        <h6><span class="price">${item.dataProductColor[0].price * item.quantity}</span><span> đ</span></h6>
                                     </div></div><hr />`;
                         $('.listItem').append(html);
                     })
@@ -215,7 +222,7 @@
                     prices.each(function(value, element) {
                         total += +$(element).html();
                     });
-                    totalPrice.append(total)
+                    totalPrice.append(total +" đ")
                     updateShippingDetails();
                 }
             })
@@ -333,38 +340,100 @@
                         shipping: $('#shipping').find(':selected').attr('class'),
                         message: $('#Message').val(),
                         totalOrder: $('#totalOrder').val(),
+                        payment: $('#payment').find(':selected').val(),
                         action: 'checkout'
                     }
-                    $.ajax({
-                        url: 'http://localhost:3000/database/controller/orderController.php',
-                        type: 'POST',
-                        data: data,
-                        success: (response) => {
-                            switch (response) {
-                                case "success":
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: "Đặt Hàng Thành Công",
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = 'home.php';
-                                        }
-                                    })
-                                    break;
-                                default:
-                                    Swal.fire({
-                                        title: 'Có gì đó sai sót',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK',
-                                    })
-                                    break;
+                    if ($('#payment').find(':selected').val() == 'banking') {
+                        $.ajax({
+                            url: 'http://localhost:3000/database/controller/vnpay.php',
+                            type: 'POST',
+                            data: data,
+                            success: (response) => {
+                                console.log(response);
+                                let result = JSON.parse(response);
+                                url = result.data;
+                                window.location.href = url;
+                                switch (response) {
+                                    case "success":
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "Đặt Hàng Thành Công",
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = 'home.php';
+                                            }
+                                        })
+                                        break;
+                                    default:
+                                        Swal.fire({
+                                            title: 'Có gì đó sai sót',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                        })
+                                        break;
+                                }
                             }
-                        }
-                    })
+                        })
+                        let url;
+                        $.ajax({
+                            url: 'http://localhost:3000/components/sendMail.php',
+                            type: 'POST',
+                            data: data,
+                            success: (response) => {
+                                console.log(response);
+                                switch (response) {
+                                    case "success":
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "Đặt Hàng Thành Công",
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = 'home.php';
+                                            }
+                                        })
+                                        break;
+                                    default:
+                                        Swal.fire({
+                                            title: 'Có gì đó sai sót',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                        })
+                                        break;
+                                }
+                            }
+                        })
+                    } else {
+                        $.ajax({
+                            url: 'http://localhost:3000/components/sendMail.php',
+                            type: 'POST',
+                            data: data,
+                            success: (response) => {
+                                console.log(response);
+                                switch (response) {
+                                    case "success":
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "Đặt Hàng Thành Công",
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = 'home.php';
+                                            }
+                                        })
+                                        break;
+                                    default:
+                                        Swal.fire({
+                                            title: 'Có gì đó sai sót',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                        })
+                                        break;
+                                }
+                            }
+                        })
+                    }
+
                 }
             }
-
-
         })
     </script>
 </body>

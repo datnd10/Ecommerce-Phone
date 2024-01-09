@@ -112,51 +112,49 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
-        const sessionValue = <?php echo json_encode($_SESSION['account']); ?>;
-        const decodedSessionValue = JSON.parse(sessionValue)[0];
         $('.submitBtn').on('click', function(e) {
             e.preventDefault();
-            if ($('#password').val() != decodedSessionValue.password) {
-                $('#wrongPassword').removeClass('d-none');
+            function checkPassword(password) {
+                const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}$/;
+                return PASSWORD_REGEX.test(password);
+            }
+            if (!checkPassword($('#newPassword').val()) || !checkPassword($('#confirmPassword').val())) {
+                $('#wrongNewPassword').toggleClass('d-none', checkPassword($('#newPassword').val()));
+                $('#wrongConfirmPassword').toggleClass('d-none', checkPassword($('#confirmPassword').val()));
             } else {
-                $('#wrongPassword').addClass('d-none');
-
-                function checkPassword(password) {
-                    const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}$/;
-                    return PASSWORD_REGEX.test(password);
-                }
-                if (!checkPassword($('#newPassword').val()) || !checkPassword($('#confirmPassword').val())) {
-                    $('#wrongNewPassword').toggleClass('d-none', checkPassword($('#newPassword').val()));
-                    $('#wrongConfirmPassword').toggleClass('d-none', checkPassword($('#confirmPassword').val()));
+                $('#wrongNewPassword').addClass('d-none');
+                $('#wrongConfirmPassword').addClass('d-none');
+                if ($('#newPassword').val() != $('#confirmPassword').val()) {
+                    $('#ConfirmPassword').removeClass('d-none');
                 } else {
-                    $('#wrongNewPassword').addClass('d-none');
-                    $('#wrongConfirmPassword').addClass('d-none');
-                    if ($('#newPassword').val() != $('#confirmPassword').val()) {
-                        $('#ConfirmPassword').removeClass('d-none');
-                    } else {
-                        $('#ConfirmPassword').addClass('d-none');
-                        $.ajax({
-                            type: "post",
-                            url: "http://localhost:3000/database/controller/userController.php",
-                            data: {
-                                id: decodedSessionValue.user_id,
-                                newpassword: $('#newPassword').val(),
-                                action: 'changePassword',
-                            },
-                            cache: false,
-                            success: function(response) {
-                                console.log(response);
-                                Swal.fire({
-                                    title: 'Cập Nhật thành công',
-                                    icon: 'success'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.reload();
-                                    }
-                                })
+                    $('#ConfirmPassword').addClass('d-none');
+                    $.ajax({
+                        type: "post",
+                        url: "http://localhost:3000/database/controller/userController.php",
+                        data: {
+                            oldPassword: $('#password').val(),
+                            newpassword: $('#newPassword').val(),
+                            action: 'changePassword',
+                        },
+                        cache: false,
+                        success: function(response) {
+                            console.log(response);
+                            switch (response) {
+                                case 'success': {       
+                                    Swal.fire({
+                                        title: 'Cập Nhật thành công',
+                                        icon: 'success'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.reload();
+                                        }
+                                    })
+                                    
+                                }
+                                
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         });

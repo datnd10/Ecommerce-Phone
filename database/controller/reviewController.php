@@ -36,6 +36,18 @@ if (isset($_POST['action']) && $_POST['action'] == 'addReview') {
 
     $sql2 = "INSERT INTO `review` ( `content`, `star`, `user_id`,  `product_color_id`) VALUES ('$description','$rate', '$user_id','$id')";
     $data = Query($sql2, $connection);
+    $sql3 = "UPDATE product p
+    SET p.rate = CEIL((
+        SELECT AVG(r.star)
+        FROM review r
+        WHERE r.product_color_id = $id
+    ))
+    WHERE p.product_id = (
+        SELECT pc.product_id
+        FROM product_color pc
+        WHERE pc.product_color_id = $id
+    );";
+    $data = Query($sql3, $connection);
     $sql3 = "SELECT review_id FROM `review` ORDER BY review_id DESC LIMIT 1;";
     $rs = Query($sql3, $connection);
     $id = $rs[0]['review_id'];
@@ -68,10 +80,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'addReview') {
 if (isset($_GET['action']) && $_GET['action'] == 'getReview') {
     $id = $_GET['id'];
     $sql = "SELECT
+    u.user_id,
     u.username,
     u.avatar,
     pc.color,
     r.content,
+    r.review_id,
     r.star, r.created_at, r.review_id
 FROM
     review r
@@ -84,7 +98,7 @@ WHERE
     $data = Query($sql, $connection);
     $images = [];
     $reviews = [];
-    
+
     foreach ($data as $row) {
         if (isset($row['review_id'])) {
             $reviewId = $row['review_id'];
@@ -92,8 +106,10 @@ WHERE
             $imagesData = Query($sqlImages, $connection);
             $images = $imagesData; // You can adjust this based on the actual structure of your $imagesData
         }
-    
+
         $review = [
+            'user_id' => $row['user_id'],
+            'review_id' => $row['review_id'],
             'username' => $row['username'],
             'color' => $row['color'],
             'content' => $row['content'],
@@ -104,7 +120,64 @@ WHERE
         ];
         $reviews[] = $review;
     }
-    
     echo json_encode($reviews);
 }
 
+if (isset($_GET['action']) && $_GET['action'] == 'getAllReview') {
+    $sql = "SELECT
+    c.category_name AS category_name,
+    p.product_name AS product_name,
+    pc.color AS product_color,
+    u.username AS user_name,
+    r.created_at AS review_date,
+    r.star as rate,
+    r.review_id
+FROM
+    category c
+    JOIN product p ON c.category_id = p.category_id
+    JOIN product_color pc ON p.product_id = pc.product_id
+    JOIN review r ON pc.product_color_id = r.product_color_id
+    JOIN user u ON r.user_id = u.user_id;";
+    $data = Query($sql, $connection);
+    if (empty($data)) {
+        echo json_encode("No data found");
+    } else {
+        echo json_encode($data);
+    }
+}
+
+
+if (isset($_GET['action']) && $_GET['action'] == 'viewComment') {
+    $id = $_GET['id'];
+    $sql = "SELECT
+    r.star,
+    r.content,
+    p.product_name,
+    pc.color,
+    pc.price,
+    pi.image
+FROM
+    product p
+    JOIN product_color pc ON p.product_id = pc.product_id
+    JOIN review r ON pc.product_color_id = r.product_color_id
+    JOIN product_image pi ON pc.product_color_id = pi.product_color_id
+    where r.review_id = $id
+GROUP BY
+    p.product_id";
+    $data = Query($sql, $connection);
+
+    $sqlImage = "SELECT ri.image
+    FROM review r
+    JOIN review_image ri ON r.review_id = ri.review_id
+    WHERE r.review_id = $id;";
+    $dataImage = Query($sqlImage, $connection);
+    $combinedData = array(
+        'data' => $data,
+        'image' => $dataImage
+    );
+    if (empty($combinedData)) {
+        echo json_encode("No data found");
+    } else {
+        echo json_encode($combinedData);
+    }
+}

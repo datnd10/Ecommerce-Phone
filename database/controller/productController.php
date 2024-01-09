@@ -1,7 +1,10 @@
 <?php
 include '../config.php';
 if (isset($_GET['action']) && $_GET['action'] == 'view') {
-    $sql = "SELECT * FROM product ";
+    $sql = "SELECT p.product_id, p.product_name, p.description, p.created_at, c.category_name,p.is_active, SUM(pc.sold_quantity) AS total_sales, 
+    SUM(pc.sold_quantity * pc.price) AS total_revenue, ROUND(AVG(r.star)) AS average_rating FROM product AS p LEFT JOIN category AS c 
+    ON p.category_id = c.category_id LEFT JOIN product_color AS pc ON p.product_id = pc.product_id LEFT JOIN review AS r 
+    ON pc.product_color_id = r.product_color_id GROUP BY p.product_id, p.product_name, p.description, c.category_name;";
     $data = Query($sql, $connection);
     $output = '';
     if (empty($data)) {
@@ -31,8 +34,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'addProduct') {
 
 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
     $id = $_GET['id'];
-    $sql = "DELETE FROM product WHERE product_id = '$id'; ";
+    $sql = "UPDATE product SET is_active = 0 WHERE product_id = $id";
     $data = Query($sql, $connection);
+    $sql1 = "UPDATE product_color SET is_active = 0 WHERE product_id = $id";
+    $data = Query($sql1, $connection);
     echo "success";
 }
 

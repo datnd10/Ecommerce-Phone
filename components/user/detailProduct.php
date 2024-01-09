@@ -89,6 +89,22 @@
         .icon-hover:hover i {
             color: #3b71ca !important;
         }
+        #images,
+        #imagesUpdate {
+            width: 90%;
+            position: relative;
+            margin: auto;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .image_review {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+        
     </style>
 </head>
 
@@ -153,7 +169,7 @@
         <div class="row d-flex p-5 mt-5  border">
             <div class="col-md-12">
                 <h2 style="color: #ee4d2d; font-style: italic">Đánh Giá Sản Phẩm</h2>
-               <hr>     
+                <hr>
             </div>
             <div class="mb-3">
                 <div class="d-flex justify-content-between order-${review.review_id}">
@@ -172,9 +188,55 @@
                     </div> -->
                 </div>
             </div>
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Đánh Giá Đơn Hàng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="main">
+                                    <input type="number" class="form-control productId" id="productColorId" name="productColorId" hidden="">
+                                    <div class="form-group row">
+                                        <div class="col-sm-3 col-3">
+                                            <img class="img-fluid image" id="myImage" src="" style="width: 150px;height: 150px; object-fit: cover;" />
+                                        </div>
+
+                                        <div class="col-sm-6 col-6 text-left">
+                                            <div class="col-12"><span>Tên Sản Phẩm: </span><span class="productName"></span></div>
+                                            <div class="col-12 mt-3"><span>Màu: </span><span class="color"></span></div>
+                                            <div class="col-12 mt-3"><span>Giá: </span><span class="price"></span></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group col-md-6 text-left mb-5">
+                                        <label for="star" style="font-weight: bold; display: block">Star</label>
+                                        <div class="rating">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-12 text-left">
+                                        <label for="description" style="font-weight: bold">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                                    </div>
+                                    <div class="upload col-md-12">
+                                    <div class="d-flex  align-items-center mb-4">
+                                            <input type="file" id="file-input" accept="image/png, image/jpeg" onchange="preview()" multiple>    
+                                        </div>
+                                        <div id="images"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <!-- <button type="button" class="btn btn-primary updateBtn">Lưu</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <hr>
         </div>
-
     </div>
 
 
@@ -197,6 +259,40 @@
     <!-- End custom js for this page -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function preview(fileInput, imageContainer, numOfFiles) {
+            imageContainer.empty();
+            numOfFiles.text(`${fileInput[0].files.length} Files Selected`);
+
+            for (let file of fileInput[0].files) {
+                let reader = new FileReader();
+                let figure = $("<figure></figure>");
+                let figCap = $("<figcaption></figcaption>");
+
+                figCap.text(file.name);
+                figure.append(figCap);
+
+                reader.onload = () => {
+                    let img = $("<img>");
+                    img.attr("src", reader.result);
+                    img.addClass("image_review"); 
+                    figure.prepend(img);
+                }
+
+                imageContainer.append(figure);
+                reader.readAsDataURL(file);
+            }
+        }
+
+        let fileInput = $("#file-input");
+        let imageContainer = $("#images");
+        let numOfFiles = $("#num-of-files");
+
+        fileInput.on('change', () => {
+            preview(fileInput, imageContainer, numOfFiles);
+        });
+
+        const sessionValue = <?php echo json_encode($_SESSION['account']); ?>;
+        const account = JSON.parse(sessionValue);
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
         const getProduct = () => {
@@ -226,19 +322,22 @@
                     const rightSide = document.querySelector('.rightSide');
                     let listPriceProduct = "";
                     data.productColor.forEach(function(product, index) {
-                        listPriceProduct += `<span class="price${index} ${index == 0 ? "" : "d-none"} h3" >$${product.price}</span>`;
+                        listPriceProduct += `<span class="price${index} ${index == 0 ? "" : "d-none"} h3" >${product.price} đ</span>`;
                     });
                     let htmlRightSide = `<div class="mt-2">
                     <h2 class="title text-dark"> ${data.product[0].product_name}</h2>
                     <div class="d-flex flex-row my-3">
                         <div class="text-warning mb-1 me-2">`
+                    console.log(data.product[0].rate);
                     for (var i = 0; i < data.product[0].rate; i++) {
-                        htmlRightSide += `<i class="mdi mdi-star-outline" style="color: #FA8232"></i>`;
+                        console.log(1);
+                        htmlRightSide += `<i class="mdi mdi-star" style="color: #FA8232"></i>`;
                     }
 
                     // Loop to add empty stars for the remaining
                     for (var i = 0; i < 5 - data.product[0].rate; i++) {
-                        htmlRightSide += `<i class="mdi mdi-star-outline"></i>`;
+                        console.log(2);
+                        htmlRightSide += `<i class="mdi mdi-star" style="color: #434a54"></i>`;
                     }
                     let sumOfSold = 0;
                     data.productColor.forEach(function(product) {
@@ -444,6 +543,54 @@
             })
         }
         getProduct();
+        // const listImageOld = [];
+        // const handelUpdateReview = (id) => {
+        //     $.ajax({
+        //         url: 'http://localhost:3000/database/controller/reviewController.php',
+        //         type: 'GET',
+        //         data: {
+        //             id: id,
+        //             action: "viewComment",
+        //         },
+        //         success: (response) => {
+        //             listImageOld.length = 0; // Làm cho mảng rỗng
+        //             $('.rating').empty();
+        //             $('.productName').empty();
+        //             $('.color').empty();
+        //             $('.price').empty();
+        //             $('#images').empty();
+        //             let data = JSON.parse(response);
+        //             console.log(data);
+        //             let color = `<span style="display: inline-block; width: 15px; height: 15px; background-color: ${data.data[0].color}; border-radius: 50%; vertical-align: middle;"></span>
+        //                                             <span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${data.data[0].color}</span>`;
+
+        //             let htmlStar = `<div class="form-group col-md-6 text-left mb-5">
+        //                                 <label for="star" style="font-weight: bold; display: block">Star</label>
+        //                                 <div class="rating">
+        //                                     <input type="radio" name="rating" value="5" id="5" class="ratingStar"><label for="5">☆</label>
+        //                                     <input type="radio" name="rating" value="4" id="4" class="ratingStar"><label for="4">☆</label>
+        //                                     <input type="radio" name="rating" value="3" id="3" class="ratingStar"><label for="3">☆</label>
+        //                                     <input type="radio" name="rating" value="2" id="2" class="ratingStar"><label for="2">☆</label>
+        //                                     <input type="radio" name="rating" value="1" id="1" class="ratingStar"><label for="1">☆</label>
+        //                                 </div>
+        //                             </div>`;
+                      
+        //             $('.productName').append(data.data[0].product_name)
+        //             $('.color').append(color);
+        //             $('.price').html("$ " + data.data[0].price)
+        //             $('#myImage').attr('src', '../../database/uploads/' + data.data[0].image);
+        //             $('.rating').append(htmlStar);
+        //             $('#description').append(data.data[0].content);
+        //             let image = "";
+        //             for (var i = 0; i < data.image.length; i++) {
+        //                 listImageOld.push(data.image[i].image);
+        //                 image += `<img src="../../database/uploads/${data.image[i].image}" class="image_review"/>`
+        //             }
+        //             $('#images').append(image);
+        //             console.log(listImageOld);
+        //         }
+        //     })
+        // }
 
         const getReview = (id) => {
             const data = {
@@ -456,6 +603,7 @@
                 data: data,
                 success: (response) => {
                     let data = JSON.parse(response);
+                    console.log(data);
                     data.forEach(function(item) {
                         console.log(item);
                         let html = `<div class="container d-flex gap-4 mb-5">
@@ -463,8 +611,8 @@
                             <img src="../../database/uploads/${item.avatar}" style="width: 50px; height: 50px; border-radius: 50%" alt="alt" />
                         </div>
                         <div class="review">
-                            <div class="review-header">
-                                <div class="review-info">
+                            <div class="review-header d-flex justify-content-between ">
+                                <div class="review-info ">
                                     <p class="reviewer-name mb-0" style="font-style: italic; color:rgba(0,0,0,.87);font-size: 18px">${item.username}</p>
                                     <div class="review-rating">`
                         for (var i = 0; i < item.star; i++) {
@@ -478,6 +626,7 @@
                         html += `</div>
                                     <p class="review-date" style="color: rgba(0,0,0,.54);width: 200px">${item.created_at} | ${item.color}</p>
                                 </div>
+                   
                             </div>
                             <div class="review-content">
                                 <p class="review-text" style="word-wrap: break-word;">${item.content}</p>
@@ -496,6 +645,10 @@
             });
         }
         getReview(productId);
+
+
+        
+
     </script>
 </body>
 

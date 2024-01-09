@@ -184,11 +184,11 @@
                     $(".quantity").each(function(index) {
                         const price = $(".price" + index);
                         const total = $(".total" + index);
-                        total.html('$' + Number(price.html()) * Number($(this).val()));
+                        total.html(Number(price.html()) * Number($(this).val()) + " đ");
                         totalcart += Number(price.html()) * Number($(this).val());
                     });
 
-                    totalAll.html('$' + totalcart);
+                    totalAll.html(totalcart+ " đ");
                 }
             })
         }
@@ -202,11 +202,11 @@
             $(".quantity").each(function(index) {
                 const price = $(".price" + index);
                 const total = $(".total" + index);
-                total.html('$' + Number(price.html()) * Number($(this).val()));
+                total.html(Number(price.html()) * Number($(this).val()) +"đ");
                 totalcart += Number(price.html()) * Number($(this).val());
             });
 
-            totalAll.html('$' + totalcart);
+            totalAll.html(totalcart + "đ");
             $.ajax({
                 type: "post",
                 url: "http://localhost:3000/database/controller/cartController.php",
