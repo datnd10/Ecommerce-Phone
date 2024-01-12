@@ -292,6 +292,22 @@
         }, 2000);
         let currentPage = 0;
         let toalPage = 0;
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
         const viewAll = () => {
             var data = {
                 'search': $('#search').val(),
@@ -307,6 +323,7 @@
                 type: 'GET',
                 data: data,
                 success: (response) => {
+                    console.log(response);
                     let category_id = $('input[name="category"]:checked').val();
                     let data = JSON.parse(response);
                     console.log(data);
@@ -364,7 +381,7 @@
                          ${product.product_name}
                         </div>
                      <div style="color: #2DA5F3;">
-                         ${product.product_price} đ
+                         ${formatVietnameseCurrency(product.product_price)}
                     </div>
                     <div>Đã bán ${product.total_sold_quantity}</div>
                     </div>`

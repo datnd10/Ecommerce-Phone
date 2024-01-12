@@ -78,8 +78,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete') {
 
 if (isset($_GET['action']) && $_GET['action'] == 'getUserById') {
     $id = $_GET['id'];
-    $sql = "SELECT * FROM user WHERE user_id = '$id'; ";
+    $sql = "SELECT * FROM user WHERE user_id = '$id';";
     $data = Query($sql, $connection);
+
     echo json_encode($data);
 }
 
@@ -91,7 +92,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'updateUser') {
     $fullname = $_POST['fullname'];
     $address = $_POST['address'];
     $role = $_POST['role'];
-    $password = $_POST['password'];
     $avatar = $_POST['oldImage'] ?? "guest.png";
     $sql = "SELECT * FROM user WHERE email = '$email' and user_id != '$id'";
     $existPhone = Query($sql, $connection);
@@ -130,8 +130,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'updateUser') {
 
         $avatar = $new_image_name;
     }
-    $hashPass = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "UPDATE user SET email = '$email', password = '$hashPass', username = '$username', fullname = '$fullname', phone = '$phone', address = '$address', avatar = '$avatar', role = $role Where user_id = '$id'";
+    $sql = "UPDATE user SET email = '$email', username = '$username', fullname = '$fullname', phone = '$phone', address = '$address', avatar = '$avatar', role = $role Where user_id = '$id'";
     $data = Query($sql, $connection);
     echo "success";
 }
@@ -140,8 +139,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'updateUser') {
 if (isset($_POST['action']) && $_POST['action'] == 'signIn') {
     $email = $_POST['email'];
     $password  = $_POST['password'];
-    $remember = isset($_POST['remember']) && $_POST['remember'] == 'on';
-
     if (empty($email) || empty($password)) {
         echo "error";
         return;
@@ -162,14 +159,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'signIn') {
         session_start();
         $_SESSION['account'] =  json_encode($data);
 
-        if ($remember) {
-            setcookie('email', $email, time() + 7 * 24 * 3600);
-            setcookie('password', $password, time() + 7 * 24 * 3600);
-            setcookie('remember', '1', time() + 7 * 24 * 3600);
-        } else {
-            setcookie('email', '', time() - 3600);
-            setcookie('remember', '', time() - 3600);
-        }
+        // if ($remember) {
+        //     setcookie('email', $email, time() + 7 * 24 * 3600);
+        //     setcookie('password', $password, time() + 7 * 24 * 3600);
+        //     setcookie('remember', '1', time() + 7 * 24 * 3600);
+        // } else {
+        //     setcookie('email', '', time() - 3600);
+        //     setcookie('remember', '', time() - 3600);
+        // }
         echo "success";
     } else {
         echo "error";

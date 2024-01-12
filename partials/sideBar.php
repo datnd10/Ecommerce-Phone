@@ -4,13 +4,13 @@
       <a href="#" class="nav-link">
 
         <div class="nav-profile-image">
-          <img src="../../assets/images/faces/face1.jpg" alt="profile">
+          <img src="../../database/uploads/guest.png" alt="profile">
           <span class="login-status online"></span>
           <!--change to offline or busy as needed-->
         </div>
         <div class="nav-profile-text d-flex flex-column">
-          <span class="font-weight-bold mb-2">David Grey. H</span>
-          <span class="text-secondary text-small">Project Manager</span>
+          <span class="font-weight-bold mb-2">Admin</span>
+          <span class="text-secondary text-small">Quản Trị</span>
         </div>
         <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
       </a>
@@ -36,8 +36,8 @@
       <div class="collapse" id="ui-basic">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" href="manageCategory.php">Quản Lý Nhãn Hàng</a></li>
-          <li class="nav-item"> <a class="nav-link" href="manageProduct.php">Quản Lý Sản Phẩm</a></li>
-          <li class="nav-item"> <a class="nav-link" href="manageProductColor.php">Quản Lý Màu Sản Phẩm</a></li>
+          <li class="nav-item"> <a class="nav-link" href="manageProduct.php">Quản Lý Mặt Hàng</a></li>
+          <li class="nav-item"> <a class="nav-link" href="manageProductColor.php">Quản Lý Loại Mặt Hàng</a></li>
         </ul>
       </div>
     </li>
@@ -55,3 +55,24 @@
     </li>
   </ul>
 </nav>
+
+<script>
+  const logout = document.querySelector('.logout');
+  if (logout) {
+    logout.onclick = function() {
+      const data = new FormData();
+      data.append('action', 'view');
+      $.ajax({
+        url: 'http://localhost:3000/database/controller/userController.php',
+        type: 'GET',
+        data: {
+          action: 'logOut',
+        },
+        success: (response) => {
+          window.location.href = 'http://localhost:3000/components/user/signIn.php';
+        }
+      })
+    }
+  }
+
+</script>

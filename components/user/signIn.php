@@ -37,6 +37,12 @@
 
             background-color: #eee;
         }
+        .forgetPass{
+            font-weight: bolder;
+        }
+        .forgetPass:hover {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -71,13 +77,8 @@
                             <input type="password" id="password" class="form-control form-control-lg" placeholder="Mật Khẩu">
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <!-- Checkbox -->
-                            <div class="form-check mb-0">
-                                <input class="form-check-input" type="checkbox" value="" id="remember-me" style="margin-left: 5px;">
-                                <label class="form-check-label" for="remember-me">Ghi Nhớ Đăng Nhập</label>
-                            </div>
-                            <a class="text-body btn" id="forgotPassword" data-bs-toggle="modal" data-bs-target="#exampleModal">Quên Mật Khẩu?</a>
+                        <div class="form-group mb-3">
+                            <a class="text-body forgetPass" id="forgotPassword" data-bs-toggle="modal" data-bs-target="#exampleModal">Quên Mật Khẩu?</a>
                         </div>
 
                         <div class="text-center text-lg-start mt-4 pt-2">
@@ -136,7 +137,6 @@
                 var data = new FormData();
                 data.append('email', $('#email').val());
                 data.append('password', $('#password').val());
-                data.append('remember', checkbox.checked);
                 data.append('action', "signIn");
                 $.ajax({
                     url: 'http://localhost:3000/database/controller/userController.php',

@@ -130,8 +130,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'getAllReview') {
     pc.color AS product_color,
     u.username AS user_name,
     r.created_at AS review_date,
-    r.star as rate,
-    r.review_id
+    r.star as rate
 FROM
     category c
     JOIN product p ON c.category_id = p.category_id

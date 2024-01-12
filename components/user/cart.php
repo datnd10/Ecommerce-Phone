@@ -94,7 +94,7 @@
 
                         <div class="float-end">
                             <a href="home.php"><button type="button" class="btn btn-lg btn-outline-dark mt-2 me-3">Tiếp tục mua sắm</button></a>
-                            <button type="button" id="checkoutButton" class="btn btn-lg btn-primary mt-2">Thanh Toán</button>
+                            <button type="button" id="checkoutButton" class="btn btn-lg btn-primary mt-2">Mua Hàng</button>
                         </div>
                     </div>
                 </div>
@@ -150,6 +150,24 @@
             });
         };
         let listcart;
+
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
+
         const viewcart = function() {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/cartController.php',
@@ -162,7 +180,10 @@
                     let data = JSON.parse(response);
                     listcart = data;
                     let html = "";
+                    let totalcart = 0;
                     data.forEach(function(item, currentIndex) {
+                        let total = item.dataProductColor[0].price * item.quantity;
+                        totalcart += total;
                         html += `<tr>
                                     <td class="p-4">${item.dataProduct[0].product_name}</td>
                                     <td class="p-4">${item.dataProductColor[0].color}</td>
@@ -171,24 +192,16 @@
                             html += `<img src="/database/uploads/${item.image}" alt="alt" style="width: 80px;height: 80px; margin-right:5px;object-fit:cover">`;
                         })
                         html += `</td>
-                                    <td class="text-right font-weight-semibold align-middle p-4 price${currentIndex}">${item.dataProductColor[0].price}</td>
+                                    <td class="text-right font-weight-semibold align-middle p-4 price${currentIndex}" id="${item.dataProductColor[0].price}">${formatVietnameseCurrency(item.dataProductColor[0].price)}</td>
                                     <td class="align-middle p-4"><input type="number" id="quantity" class="quantity" name="quantity" data-item="${item.dataProductColor[0].product_color_id}" class="form-control text-center" min="1" max="${item.dataProductColor[0].quantity}" value="${item.quantity}"></td>
-                                    <td class="text-right font-weight-semibold align-middle p-4 total${currentIndex}" style="width: 150px">$115.1</td>
+                                    <td class="text-right font-weight-semibold align-middle p-4 total${currentIndex}" style="width: 150px">${formatVietnameseCurrency(total)}</td>
                                     <td class="text-center align-middle px-0"><a onclick="doDelete(${item.dataProductColor[0].product_color_id})" class="shop-tooltip close float-none text-danger removeBtn" title="" data-original-title="Remove">×</a></td>
                                     </tr>`;
                     })
                     const cartTable = document.querySelector('.cartTable');
                     cartTable.innerHTML = html;
                     const totalAll = $("strong");
-                    let totalcart = 0;
-                    $(".quantity").each(function(index) {
-                        const price = $(".price" + index);
-                        const total = $(".total" + index);
-                        total.html(Number(price.html()) * Number($(this).val()) + " đ");
-                        totalcart += Number(price.html()) * Number($(this).val());
-                    });
-
-                    totalAll.html(totalcart+ " đ");
+                    totalAll.html(formatVietnameseCurrency(totalcart));
                 }
             })
         }
@@ -202,11 +215,11 @@
             $(".quantity").each(function(index) {
                 const price = $(".price" + index);
                 const total = $(".total" + index);
-                total.html(Number(price.html()) * Number($(this).val()) +"đ");
-                totalcart += Number(price.html()) * Number($(this).val());
+                total.html(formatVietnameseCurrency(Number(price.attr("id")) * Number($(this).val())));
+                totalcart += Number(price.attr("id")) * Number($(this).val());
             });
 
-            totalAll.html(totalcart + "đ");
+            totalAll.html(formatVietnameseCurrency(totalcart));
             $.ajax({
                 type: "post",
                 url: "http://localhost:3000/database/controller/cartController.php",

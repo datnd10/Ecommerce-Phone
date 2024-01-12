@@ -12,12 +12,12 @@
 </style>
 
 
+
 <div style="background-color: #1B6392;">
     <div class="container d-flex justify-content-between align-items-center py-3">
         <div class="logo col-md-2">
-            <a href="home.php"><img src="../../assets/images/logo.png" alt="Logo"></a>
+            <a href="home.php"><img src="../../assets/images/hoha-logo.png" alt="Logo" style="height: 80px; width: 190px; object-fit: cover;"></a>
         </div>
-
         <div class="search col-md-6">
             <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." style="padding: 10px 15px; width: 600px">
         </div>
@@ -40,7 +40,7 @@
 
             echo "<div class='col-md-2 d-flex align-items-center justify-content-between'>
                     <a href='cart.php' id='cartLink' style='text-decoration: none; color: inherit;'>
-                        <i class='mdi mdi-cart' style='margin-right: 30px'></i>
+                        <i class='mdi mdi-cart' style='font-size: 35px'></i>
                     </a>
                     <div class='dropdown'>
                         <button class='btn dropdown-toggle d-flex align-items-center justify-content-center border border-secondary p-2' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
@@ -54,7 +54,7 @@
                 echo "<a href='/components/admin/dashBoard.php' class='dropdown-item'>Quản lý cửa hàng</a>";
             }
 
-            echo "<a href='historyPurchase.php' class='dropdown-item'>Lịch sử mua sắm</a>
+            echo "<a href='historyPurchase.php' class='dropdown-item'>Lịch sử mua hàng</a>
                     <a href='changePassword.php' class='dropdown-item'>Đổi mật khẩu</a>
                     <a class='dropdown-item logout' href='#'>Đăng xuất</a>
                 </div>

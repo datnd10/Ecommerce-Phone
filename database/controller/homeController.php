@@ -10,14 +10,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'view') {
     $rate = isset($_GET['rate']) ? $_GET['rate'] : null;
 
 
-    $sqlCategory = "SELECT * FROM category ";
+    $sqlCategory = "SELECT * FROM category where `is_active` = 1";
     $dataCategory = Query($sqlCategory, $connection);
     $response = array();
     $response['dataCategory'] = $dataCategory;
 
-
-
-        $sqlProduct = "SELECT
+    $sqlProduct = "SELECT
         p.product_id,
         p.product_name,
         p.rate AS product_rate,

@@ -295,6 +295,24 @@
         const account = JSON.parse(sessionValue);
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
+
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
+
         const getProduct = () => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/productColorController.php',
@@ -322,13 +340,12 @@
                     const rightSide = document.querySelector('.rightSide');
                     let listPriceProduct = "";
                     data.productColor.forEach(function(product, index) {
-                        listPriceProduct += `<span class="price${index} ${index == 0 ? "" : "d-none"} h3" >${product.price} đ</span>`;
+                        listPriceProduct += `<span class="price${index} ${index == 0 ? "" : "d-none"} h3" >${formatVietnameseCurrency(product.price)}</span>`;
                     });
                     let htmlRightSide = `<div class="mt-2">
                     <h2 class="title text-dark"> ${data.product[0].product_name}</h2>
                     <div class="d-flex flex-row my-3">
                         <div class="text-warning mb-1 me-2">`
-                    console.log(data.product[0].rate);
                     for (var i = 0; i < data.product[0].rate; i++) {
                         console.log(1);
                         htmlRightSide += `<i class="mdi mdi-star" style="color: #FA8232"></i>`;
@@ -368,8 +385,8 @@
                     ${data.product[0].description}
                     </p>
                     <div class="row">
-                        <dt class="col-3">Category:</dt>
-                        <dd class="col-9">${data.category[0].category_name}</dd>
+                        <dt class="col-4">Hãng Sản Phẩm:</dt>
+                        <dd class="col-8">${data.category[0].category_name}</dd>
                     </div>
 
                     <hr />  
@@ -383,7 +400,7 @@
                 <input type="text" hidden="" name="color" value class="inputColor">
                 <input type="text" value="${data.product.product_id}" hidden="" name="productID">
                 <div class="d-flex mt-4">
-                    <div style="font-size: 20px;font-weight: bold; margin-right: 50px">Quantity:</div>
+                    <div style="font-size: 20px;font-weight: bold; margin-right: 50px">Số Lượng:</div>
                     <div>
                     <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1">
                         <input type="text" id="inventory" name="inventory" hidden="">
@@ -393,11 +410,7 @@
                     </div>
                 </div>
                 <div class="d-flex mt-3" style="gap: 30px">
-                    <button id="submitBtn" type="button" style="text-decoration: none; color: #ee4d2d; background-color: rgba(255,87,34,0.1); border: 1px solid #ee4d2d; padding: 15px 40px">Thêm vào giỏ hàng</button>
-                    <button id="buyNow" type="button" style="background-color: rgb(238, 77, 45); color: rgb(255, 255, 255);border: 1px solid #ee4d2d; padding: 15px 40px">
-                        <i class="fa-solid fa-money-bills"></i>
-                        Mua Ngay
-                    </button>
+                    <button id="submitBtn" type="button" style="text-decoration: none; color: #ee4d2d; background-color: rgba(255,87,34,0.1); border: 1px solid #ee4d2d; padding: 15px 40px">Đặt Hàng</button>
                 </div>`
                     rightSide.innerHTML = htmlRightSide;
                     const description = document.querySelector('.description');
@@ -524,14 +537,14 @@
                                         case "success":
                                             Swal.fire({
                                                 icon: 'success',
-                                                title: "Add To cart Successfully",
+                                                title: "Thêm vào giỏ hàng thành công",
                                                 confirmButtonText: 'OK',
                                             })
                                             break;
                                         default:
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: "Product is sold out",
+                                                title: "Sản phẩm đã bán hết.",
                                                 confirmButtonText: 'OK',
                                             })
                                     }

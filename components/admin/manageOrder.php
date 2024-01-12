@@ -24,11 +24,6 @@
             text-decoration: none;
         }
 
-        @font-face {
-            font-family: pop;
-            src: url(./Fonts/Poppins-Medium.ttf);
-        }
-
         .main {
             width: 100%;
             display: flex;
@@ -202,12 +197,6 @@
                 <div class="content-wrapper">
                     <div class="page-header">
                         <h2 class="page-title h2"> Quản Lý Đơn Hàng</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashBoard.php">Thống Kê</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Đơn Hàng</li>
-                            </ol>
-                        </nav>
                     </div>
                     <div class="row">
                         <div class="col grid-margin stretch-card">
@@ -241,7 +230,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Cập Nhật Trạng Thái</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close closeBtn" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <input type="text" class="form-control" id="orderId" hidden>
@@ -351,6 +340,22 @@
             });
         });
 
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
 
         const showAllOrder = () => {
             $.ajax({
@@ -388,6 +393,8 @@
                                 default:
                                     status = 'Trạng thái không xác định';
                             }
+                            let money = item.total_money ? item.total_money : 0;
+                            console.log(money);
                             let html = `<tr>
                                                 <td>
                                                     <a href="viewOrder.php?id=${item.order_id}">#${item.order_id}</a>
@@ -399,13 +406,13 @@
                                                     <span>${item.created_at}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.total_money} đ</span>
+                                                    <span>${formatVietnameseCurrency(money)}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.payment_method}</span>
+                                                    <span>${item.payment_method === 'cod' ? "Thanh Toán Khi Nhận Hàng" : "Thanh Toán Online"}</span>
                                                 </td>
                                                 <td>
-                                                    <span class = "${item.payment_status === 'paid' ? "text-success" : "text-danger"}">${item.payment_status}</span>
+                                                    <span class = "${item.payment_status === 'paid' ? "text-success" : "text-danger"}">${item.payment_status === 'paid' ? "Đã Thanh Toán" : "Chưa Thanh Toán"}</span>
                                                 </td>
                                                 <td>
                                                     <span>${status}</span>
@@ -489,6 +496,7 @@
                                 confirmButtonText: 'Ok',
                             }).then((result) => {
                                 if (result.isConfirmed) {
+                                    $('.closeBtn').click();
                                     showAllOrder();
                                 }
                             })

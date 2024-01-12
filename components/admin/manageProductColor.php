@@ -86,12 +86,6 @@
                 <div class="content-wrapper">
                     <div class="page-header">
                         <h2 class="page-title h2"> Quản Lý Sản Phẩm</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashBoard.php">Thống Kê</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Sản Phẩm</li>
-                            </ol>
-                        </nav>
                     </div>
                     <div class="row">
                         <div class="col grid-margin stretch-card">
@@ -131,7 +125,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Cập Nhật Màu Sản Phẩm</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="removeInformations()"></button>
+                                <button type="button" class="btn-close closeBtn" data-bs-dismiss="modal" aria-label="Close" onclick="removeInformations()"></button>
                             </div>
                             <div class="modal-body">
                                 <form class="row g-3">
@@ -174,8 +168,8 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="removeInformations()">Close</button>
-                                <button type="button" class="btn btn-primary btnSave">Save changes</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="removeInformations()">Đóng</button>
+                                <button type="button" class="btn btn-primary btnSave">Lưu Thay Đổi</button>
                             </div>
                         </div>
                     </div>
@@ -281,7 +275,22 @@
         }
         getAllCategories(categoryArray);
         getAllProducts(productArray);
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
 
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
         const showAllProductColors = () => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/productColorController.php',
@@ -298,6 +307,8 @@
                     } else {
                         $('.bodyTable').empty();
                         data.forEach(function(item) {
+                            let price = item.price;
+                            let totalPrice = item.sold_quantity * item.price;
                             let html = `<tr>
                                                 <td>
                                                     <span>${item.category_name}<span>
@@ -306,11 +317,10 @@
                                                     <span>${item.product_name}</span>
                                                 </td>
                                                 <td>
-                                                    <span style="display: inline-block; width: 15px; height: 15px; background-color: ${item.color}; border-radius: 50%; vertical-align: middle;"></span>
                                                     <span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${item.color}</span>
                                                 </td>
                                                 <td>
-                                                    <span>$ ${item.price}</span>
+                                                    <span>${formatVietnameseCurrency(price)}</span>
                                                 </td>
                                                 <td>
                                                     <span>${item.quantity}</span>
@@ -319,7 +329,7 @@
                                                     <span>${item.sold_quantity}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.sold_quantity * item.price} đ</span>
+                                                    <span>${formatVietnameseCurrency(totalPrice)}</span>
                                                 </td>
                                                 <td>
                                                     <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ? "Hoạt Động" : "Đã Khóa"}</span>
@@ -350,6 +360,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                cancelButtonText: 'Xóa',
                 confirmButtonText: 'Xóa!'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -387,7 +398,7 @@
             updateProductSelect(e.target.value, 'product');
         });
 
-        const listImageOld = [];
+        let listImageOld = [];
 
         const handleUpdate = (id) => {
             $.ajax({
@@ -398,6 +409,7 @@
                     id: id
                 },
                 success: (response) => {
+                    listImageOld = [];
                     $('.modal-title').html('Cập Nhật Màu Sản Phẩm');
                     $('.btnSave').addClass('updateBtn');
                     const data = JSON.parse(response);
@@ -441,6 +453,7 @@
             const fields = ['category', 'product', 'productColorId', 'color', 'price', 'quantity', 'file-input'];
             fields.forEach(field => {
                 $(`#${field}`).val('');
+                $(`#${field}`).removeClass('is-invalid');
             });
             $('#images').empty();
             updateProductSelect(0, 'product');
@@ -450,6 +463,7 @@
             if ($('.btnSave').hasClass('addBtn')) {
                 $('.btnSave').removeClass('addBtn');
             }
+            $('#existColor').addClass('d-none');
         }
 
         $('.addProduct').on('click', function() {
@@ -523,16 +537,17 @@
                         console.log(response);
                         switch (response) {
                             case 'success':
+                                existColor.addClass('d-none');
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Cập Nhật Thành Công',
                                     confirmButtonText: 'OK',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
+                                        $('.closeBtn').click();
                                         showAllProductColors();
                                     }
                                 });
-                                existColor.addClass('d-none');
                                 break;
                             default:
                                 if (response.includes('existData')) {

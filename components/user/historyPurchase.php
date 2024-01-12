@@ -69,6 +69,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="../../assets/js/simple-datatables.js"></script>
     <script>
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
+
         const showAllOrders = () => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/orderController.php',
@@ -118,7 +135,7 @@
                                                 <span>${item.created_at}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.total_money} đ</span>
+                                                    <span>${formatVietnameseCurrency(item.total_money)}</span>
                                                 </td>
                                                 <td>
                                                     <span>Đã Thanh Toán</span>
@@ -127,15 +144,14 @@
                                                     <span>${status}</span>
                                                 </td>`
 
-                                                if (item.status != 'canceled') {
-                                                        html += `<td>
+                            if (item.status != 'canceled') {
+                                html += `<td>
                                                     <a onclick="handleDelete(${item.order_id})"><i class="mdi mdi-delete fs-5 text-danger"></i></a>
                                                 
                                                     </td>  `
-                                                }
-                                                else {
-                                                    html += `<td></td>`;
-                                                }
+                            } else {
+                                html += `<td></td>`;
+                            }
 
                             html += `</tr>`
                             $('.bodyTable').append(html);
@@ -153,6 +169,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                cancelButtonText: 'Đóng!',
                 confirmButtonText: 'Xóa!'
             }).then((result) => {
                 if (result.isConfirmed) {

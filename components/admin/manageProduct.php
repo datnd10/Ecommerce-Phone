@@ -34,12 +34,6 @@
                 <div class="content-wrapper">
                     <div class="page-header">
                         <h2 class="page-title h2"> Quản Lý Sản Phẩm</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashBoard.php">Thống Kê</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Sản Phẩm</li>
-                            </ol>
-                        </nav>
                     </div>
                     <div class="row">
                         <div class="col grid-margin stretch-card">
@@ -78,7 +72,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Cập Nhật Nhãn Hàng</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="removeInformations()"></button>
+                                <button type="button" class="btn-close closeBtn" data-bs-dismiss="modal" aria-label="Close" onclick="removeInformations()"></button>
                             </div>
                             <div class="modal-body">
                                 <form class="row g-3">
@@ -103,8 +97,8 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="removeInformations()">Close</button>
-                                <button type="button" class="btn btn-primary btnSave">Save changes</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="removeInformations()">Đóng</button>
+                                <button type="button" class="btn btn-primary btnSave">Lưu</button>
                             </div>
                         </div>
                     </div>
@@ -158,7 +152,22 @@
             });
         };
         getAllCategories(categoryArray);
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
 
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
         const showAllProducts = () => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/productController.php',
@@ -178,6 +187,7 @@
                             const filledStars = Array.from({length: item.average_rating}, () => '<i class="mdi mdi-star" style="color: #FA8232"></i>');
                             const emptyStars = Array.from({length: 5 - item.average_rating}, () => '<i class="mdi mdi-star"></i>');
                             const starsHtml = filledStars.concat(emptyStars).join('');
+                            let money = item.total_revenue ? item.total_revenue : 0;
                             let html = `<tr>
                                                 <td>
                                                     <span>${item.category_name}</span>
@@ -189,7 +199,7 @@
                                                     <span>${item.total_sales ? item.total_sales : 0}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.total_revenue ? item.total_revenue : 0} đ</span>
+                                                    <span>${formatVietnameseCurrency(money)}</span>
                                                 </td>
                                                 <td>
                                                     <span>${starsHtml}</span>
@@ -225,6 +235,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                cancelButtonText:"Đóng!",
                 confirmButtonText: 'Xóa!'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -272,6 +283,7 @@
             const fields = ['productName', 'description', 'category'];
             fields.forEach(field => {
                 $(`#${field}`).val('');
+                $(`#${field}`).removeClass('is-invalid');
             });
             if ($('.btnSave').hasClass('updateBtn')) {
                 $('.btnSave').removeClass('updateBtn');
@@ -279,6 +291,7 @@
             if ($('.btnSave').hasClass('addBtn')) {
                 $('.btnSave').removeClass('addBtn');
             }
+            $('#existProductName').addClass('d-none');
         }
 
         $('.addProduct').on('click', function() {
@@ -336,16 +349,17 @@
                         console.log(response);
                         switch (response) {
                             case "success":
+                                existProductName.addClass('d-none');
                                 Swal.fire({
                                     icon: 'success',
                                     title: "Cập nhật thành công",
                                     confirmButtonText: 'Ok',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
+                                        $('.closeBtn').click();
                                         showAllProducts();
                                     }
                                 })
-                                existProductName.addClass('d-none');
                                 break;
                             default:
                                 if (response.includes("existProductName")) {

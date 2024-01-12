@@ -217,7 +217,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
         $orderId =  $row['order_id'];
         $create_at = $row['created_at'];
     }
-
     $sqlCart = "SELECT * FROM cart WHERE user_id = '$user_id'";
     $dataCart = Query($sqlCart, $connection);
     
@@ -337,7 +336,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete') {
 if (isset($_POST['action']) && $_POST['action'] == 'updateStatus') {
     $order_id = $_POST['id'];
     $status = $_POST['status'];
-    $sql = "UPDATE `order` SET `status` = '$status' WHERE `order_id` = $order_id;";
+    $sql = "UPDATE `order` SET `status` = '$status', `payment_status` = 'paid' WHERE `order_id` = $order_id;";
     $data = Query($sql, $connection);
     if ($status == 'received') {
         $sqlUser = "SELECT user.email,user.username, `order`.* FROM `user` JOIN `order` ON `user`.user_id = `order`.user_id WHERE `order`.order_id = $order_id;";

@@ -369,6 +369,23 @@
                 $(this).toggleClass('active', index <= stepIndex);
             });
         }
+        
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
 
         const showOrderDetail = () => {
             $.ajax({
@@ -389,7 +406,8 @@
                         $('.bodyTable').empty();
                         let totalPrice = 0;
                         data.detail.forEach(function(item) {
-                            console.log(item);
+                            let price = item.price ? item.price : 0;
+                            let total = item.quantity * item.price;
                             let html = `<tr>
                                         <td class="sherah-table__column-1 sherah-table__data-1">
                                             <div class="sherah-table__product--thumb">
@@ -400,12 +418,12 @@
                                             
                                             <div class="sherah-table__product-name">
                                                 <h4 class="sherah-table__product-name--title">${item.product_name}</h4>
-                                                <p class="sherah-table__product-name--text">Màu: <span style="display: inline-block; width: 15px; height: 15px; background-color: ${item.color}; border-radius: 50%; vertical-align: middle;"></span></p>
+                                                <p class="sherah-table__product-name--text">Màu: <span> ${item.color}</span></p>
                                             </div>
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-3">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">${item.price} đ</p>
+                                                <p class="sherah-table__product-desc">${formatVietnameseCurrency(price)}</p>
                                             </div>
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-4">
@@ -415,16 +433,16 @@
                                         </td>
                                         <td class="sherah-table__column-1 sherah-table__data-5">
                                             <div class="sherah-table__product-content">
-                                                <p class="sherah-table__product-desc">${item.quantity * item.price} đ</p>
+                                                <p class="sherah-table__product-desc">${formatVietnameseCurrency(total)}</p>
                                             </div>
                                         </td>
                                     </tr>`
                             totalPrice += +item.quantity * +item.price;
                             $('.bodyTable').append(html);
                         })
-                        $('.totalPrice').html(totalPrice +" đ");
-                        $('.shipvalue').html(data.information[0].shipping+" đ");
-                        $('.totalPriceAndShip').html(data.information[0].total_money+" đ");
+                        $('.totalPrice').html(formatVietnameseCurrency(totalPrice));
+                        $('.shipvalue').html(formatVietnameseCurrency(data.information[0].shipping));
+                        $('.totalPriceAndShip').html(formatVietnameseCurrency(data.information[0].total_money));
                         $('.customerName').html(data.information[0].name);
                         $('.phone').html(data.information[0].phone);
                         $('.gmail').html(data.information[0].email);

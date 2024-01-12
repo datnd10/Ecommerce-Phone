@@ -174,12 +174,6 @@
                 <div class="content-wrapper">
                     <div class="page-header">
                         <h2 class="page-title h2"> Quản Lý Đơn Hàng</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashBoard.php">Thống Kê</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Đánh Giá</li>
-                            </ol>
-                        </nav>
                     </div>
                     <div class="row">
                         <div class="col grid-margin stretch-card">
@@ -229,13 +223,13 @@
 
                                     </div>
                                     <div class="form-group col-md-6 text-left mb-5">
-                                        <label for="star" style="font-weight: bold; display: block">Star</label>
+                                        <label for="star" style="font-weight: bold; display: block">Sao</label>
                                         <div class="rating">
 
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12 text-left">
-                                        <label for="description" style="font-weight: bold">Description</label>
+                                        <label for="description" style="font-weight: bold">Miêu Tả</label>
                                         <textarea class="form-control" id="description" name="description" rows="4" disabled></textarea>
                                     </div>
                                     <div class="upload col-md-12">
@@ -271,6 +265,8 @@
     <script src="../../assets/js/simple-datatables.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        
+
         const handleViewComment = (id) => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/reviewController.php',
@@ -288,8 +284,7 @@
                     $('#images').empty();
                     let data = JSON.parse(response);
                     console.log(data);
-                    let color = `<span style="display: inline-block; width: 15px; height: 15px; background-color: ${data.data[0].color}; border-radius: 50%; vertical-align: middle;"></span>
-                                                    <span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${data.data[0].color}</span>`;
+                    let color = `<span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${data.data[0].color}</span>`;
 
                     let htmlStar = "";
                     for (var i = 0; i < 5 - data.data[0].star; i++) {
@@ -300,7 +295,7 @@
                     }
                     $('.productName').append(data.data[0].product_name)
                     $('.color').append(color);
-                    $('.price').html("$ " + data.data[0].price)
+                    $('.price').html(data.data[0].price + " đ")
                     $('#myImage').attr('src', '../../database/uploads/' + data.data[0].image);
                     $('.rating').append(htmlStar);
                     $('#description').append(data.data[0].content);
@@ -345,11 +340,8 @@
                                                 <td>
                                                     <span>${item.product_name}</span>
                                                 </td>
-                                                <td>
-                                                    <span>
-                                                    <span style="display: inline-block; width: 15px; height: 15px; background-color: ${item.product_color}; border-radius: 50%; vertical-align: middle;"></span>
+                                                <td>                 
                                                     <span style="display: inline-block; vertical-align: middle; margin-top: -2px;margin-left: 5px;">${item.product_color}</span>
-                                                    </span>
                                                 </td>
                                                 <td>
                                                     <span>${item.user_name}</span>

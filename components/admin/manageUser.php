@@ -42,13 +42,7 @@
             <div class="main-panel">
                 <div class="content-wrapper">
                     <div class="page-header">
-                        <h2 class="page-title h2"> List User </h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashBoard.php">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Manage Users</li>
-                            </ol>
-                        </nav>
+                        <h2 class="page-title h2"> Danh Sách Người Dùng</h2>
                     </div>
                     <div class="row">
                         <div class="col grid-margin stretch-card">
@@ -99,7 +93,7 @@
                                         </label>
                                         <input type="email" class="form-control" id="email" placeholder="Email">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 typePassword">
                                         <label for="password" class="form-label">
                                             <span>Mật Khẩu:</span>
                                             <span id="wrongPassword" class="text-danger d-none">Mật khẩu ít nhất 6 kí tự bao gồm chữ và số</span>
@@ -120,6 +114,10 @@
                                         </label>
                                         <input type="text" class="form-control" id="fullname" placeholder="Tên đầy đủ">
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="address" class="form-label">Địa Chỉ:</label>
+                                        <input type="text" class="form-control" id="address" placeholder="1234 Main St">
+                                    </div>
                                     <div class="col-md-4">
                                         <label for="phone" class="form-label">
                                             <span>Điện Thoại:</span>
@@ -128,10 +126,7 @@
                                         </label>
                                         <input type="text" class="form-control" id="phone" placeholder="Số Điện Thoại">
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="address" class="form-label">Địa Chỉ:</label>
-                                        <input type="text" class="form-control" id="address" placeholder="1234 Main St">
-                                    </div>
+                                    
                                     <div class="col-md-2">
                                         <label for="role" class="form-label">Quyền:</label>
                                         <select id="role" class="form-select form-select-lg">
@@ -139,17 +134,17 @@
                                             <option value="1">Khách</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
-                                        <label for="avatar">Ảnh Đại Diện</label>
-                                        <input type="file" class="form-control-file mt-3" accept="image/*" onchange="loadFile(event)" id="avatar" name="avatar">
+                                    <div class="col-md-12">
+                                        <label for="avatar" class="col-md-12">Ảnh Đại Diện</label>
+                                        <input type="file" class="form-control-file mt-3 col-md-12" accept="image/*" onchange="loadFile(event)" id="avatar" name="avatar">
                                         <img id="avatarDisplay" style="width: 200px;height: 200px;object-fit: cover; border-radius: 50%;margin-top: 10px; border: 1px solid #ccc;" />
                                         <input type="text" class="form-control" id="image" name="image" hidden="">
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="removeInformations()">Close</button>
-                                <button type="button" class="btn btn-primary btnSave">Save changes</button>
+                                <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal" onclick="removeInformations()">Đóng</button>
+                                <button type="button" class="btn btn-primary btnSave">Lưu</button>
                             </div>
                         </div>
                     </div>
@@ -196,6 +191,22 @@
             $('#image').val(event.target.files[0].name);
         };
 
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
 
         const showAllUsers = () => {
             $.ajax({
@@ -213,6 +224,7 @@
                     } else {
                         $('.bodyTable').empty();
                         data.forEach(function(item) {
+                            let money = item.total_amount ? item.total_amount : 0;
                             let html = `<tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -229,7 +241,7 @@
                                                     <span>${item.total_orders}</span>
                                                 </td>
                                                 <td>
-                                                    <span>${item.total_amount ? item.total_amount : 0} đ</span>
+                                                    <span>${formatVietnameseCurrency(money)}</span>
                                                 </td>
                                                 <td>
                                                     <span class = "${item.is_active == 1 ? "text-success" : "text-danger"}">${item.is_active == 1 ?"Hoạt Động":"Đã Khóa"}</span>
@@ -260,6 +272,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                cancelButtonText: 'Đóng!',
                 confirmButtonText: 'Xóa!'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -293,12 +306,13 @@
                     id: id
                 },
                 success: (response) => {
+                    console.log(response);
+                    $('.typePassword').addClass("d-none");
                     $('.modal-title').html('Cập Nhật Người Dùng');
                     $('.btnSave').addClass('updateBtn');
                     let data = JSON.parse(response);
                     $("#inputUserid").val(data[0].user_id);
                     $("#email").val(data[0].email);
-                    $("#password").val(data[0].password);
                     $("#username").val(data[0].username);
                     $("#fullname").val(data[0].fullname);
                     $("#phone").val(data[0].phone);
@@ -320,6 +334,7 @@
             const fields = ['email', 'password', 'username', 'fullname', 'phone', 'address', 'role', 'avatar'];
             fields.forEach(field => {
                 $(`#${field}`).val('');
+                $(`#${field}`).removeClass('is-invalid');
             });
             $('#avatarDisplay')[0].src = '';
             if ($('.btnSave').hasClass('updateBtn')) {
@@ -328,14 +343,21 @@
             if ($('.btnSave').hasClass('addBtn')) {
                 $('.btnSave').removeClass('addBtn');
             }
+            $('#existEmail').addClass('d-none');
+            $('#existUsername').addClass('d-none');
+            $('#existPhone').addClass('d-none');
+            $('#wrongEmail').addClass('d-none');
+            $('#wrongPassword').addClass('d-none');
+            $('#existPhone').addClass('d-none');
         }
 
         $('.addUser').on('click', function() {
+            $('.typePassword').removeClass("d-none");
             $('.modal-title').html('Thêm Người Dùng Mới');
             $('.btnSave').addClass('addBtn');
         })
 
-        function handleUserAction(action) {
+        function handleUserAction(action, arrayCheck) {
             const wrongEmail = $('#wrongEmail');
             const existEmail = $('#existEmail');
             const wrongPassword = $('#wrongPassword');
@@ -347,7 +369,7 @@
                 return value.trim() === '';
             }
 
-            const fields = ['email', 'password', 'username', 'fullname', 'phone', 'address', 'role'];
+            const fields = arrayCheck;
 
             fields.forEach(field => {
                 const element = $(`#${field}`);
@@ -381,11 +403,17 @@
                 }
 
                 const checkEmailValid = checkEmail($('#email').val());
-                const checkPasswordValid = checkPassword($('#password').val());
-                const checkPhoneValid = checkPhone($('#phone').val());
 
+                let checkPasswordValid;
+                if(action == 'addUser'){
+                    checkPasswordValid = checkPassword($('#password').val());
+                    wrongPassword.toggleClass('d-none', checkPassword($('#password').val()));
+                }else {
+                    checkPasswordValid = true;
+                }
+               
+                const checkPhoneValid = checkPhone($('#phone').val());
                 wrongEmail.toggleClass('d-none', checkEmail($('#email').val()));
-                wrongPassword.toggleClass('d-none', checkPassword($('#password').val()));
                 wrongPhone.toggleClass('d-none', checkPhone($('#phone').val()));
 
                 if (checkEmailValid && checkPhoneValid && checkPasswordValid) {
@@ -416,18 +444,19 @@
                             console.log(response);
                             switch (response) {
                                 case "success":
+                                    existEmail.addClass('d-none');
+                                    existPhone.addClass('d-none');
+                                    existUsername.addClass('d-none');
                                     Swal.fire({
                                         icon: 'success',
                                         title: "Cập nhật thành công",
                                         confirmButtonText: 'Ok',
                                     }).then((result) => {
                                         if (result.isConfirmed) {
+                                            $('.closeBtn').click();
                                             showAllUsers();
                                         }
                                     })
-                                    existEmail.addClass('d-none');
-                                    existPhone.addClass('d-none');
-                                    existUsername.addClass('d-none');
                                     break;
                                 default:
                                     if (response.includes("existemail")) {
@@ -435,7 +464,6 @@
                                     } else {
                                         existEmail.addClass('d-none');
                                     }
-
                                     if (response.includes("existusername")) {
                                         existUsername.removeClass('d-none');
                                     } else {
@@ -460,11 +488,11 @@
         }
 
         $(document).on('click', '.updateBtn', function() {
-            handleUserAction("updateUser");
+            handleUserAction("updateUser",['email', 'username', 'fullname', 'phone', 'address', 'role']);
         });
 
         $(document).on('click', '.addBtn', function() {
-            handleUserAction("addUser");
+            handleUserAction("addUser",['email', 'password', 'username', 'fullname', 'phone', 'address', 'role']);
         });
     </script>
 </body>

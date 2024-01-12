@@ -51,7 +51,7 @@
                                 <input type="text" required class="form-control" id="Address" placeholder="Specific Address" name="address" disabled>
                             </div>
                             <div class="mb-3">
-                                <label for="shipping" class="form-label" style="font-weight: bold">Shipping</label>
+                                <label for="shipping" class="form-label" style="font-weight: bold">Vận Chuyện</label>
                                 <select id="shipping" class="form-select" name="shipping">
                                     <option value="1" class="3">Ship Thường (Nhận Hàng Sau 1 Tuần)</option>
                                     <option value="2" class="4">Ship Nhanh (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</option>
@@ -174,17 +174,36 @@
         const shipping = $('#shipping');
         const totalOrder = $('#totalOrder');
         const totalPriceAndShip = $('.totalPriceAndShip');
-        let total = 0;
+
+        let totalCart = 0;
+
+        function formatVietnameseCurrency(amount) {
+            try {
+                // Đảm bảo amount là một số
+                amount = parseFloat(amount);
+
+                // Sử dụng hàm toLocaleString để định dạng số và thêm dấu phẩy
+                formattedAmount = amount.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                });
+
+                return formattedAmount;
+            } catch (error) {
+                return "Số tiền không hợp lệ";
+            }
+        }
 
         function updateShippingDetails() {
             const selectedOption = shipping.find('option:selected');
             const selectedOptionClassName = selectedOption.prop('class');
-
-            $('.shipvalue').html(selectedOptionClassName + "đ");
-            totalPriceAndShip.empty().append(total + (+selectedOptionClassName) +" đ");
-            totalInput.val(total + (+selectedOptionClassName));
+            $('.shipvalue').html(formatVietnameseCurrency(selectedOptionClassName));
+            totalPriceAndShip.empty().append(formatVietnameseCurrency(totalCart + (+selectedOptionClassName)));
+            totalInput.val(totalCart + (+selectedOptionClassName));
             totalOrder.val(totalPriceAndShip.html());
         };
+
+        
 
         function init() {
             $('#Name').val(decodedSessionValue.fullname);
@@ -197,6 +216,7 @@
                     action: 'viewcart',
                 },
                 success: (response) => {
+                    let total = 0;
                     let data = JSON.parse(response);
                     data.forEach(function(item, currentIndex) {
                         let html = `<div class="d-flex justify-content-between">
@@ -205,24 +225,22 @@
                                     </div>
                                     <div class="col-sm-6 col-6">
                                         <div class="col-12" style="font-weight: bold;font-size: 18px">${item.dataProduct[0].product_name}</div>
-                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Quantity: <span style="font-weight: lighter ;font-style: normal">${item.quantity}</span></small></div>
-                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Color: 
-                                            <span style="display: inline-block; width: 15px; height: 15px; background-color: ${item.dataProductColor[0].color}; border-radius: 50%; vertical-align: middle;"></span>
+                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Số Lượng: <span style="font-weight: lighter ;font-style: normal">${item.quantity}</span></small></div>
+                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Màu: 
                                             <span style="font-weight: lighter ;font-style: normal">${item.dataProductColor[0].color}</span>
                                         </small>
                                         </div>
-                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Price: <span style="font-weight: lighter ;font-style: normal">${item.dataProductColor[0].price} đ</span></small></div>
+                                        <div class="col-12"><small style="font-weight: bold ;font-style: italic;font-size: 14px">Giá: <span style="font-weight: lighter ;font-style: normal">${formatVietnameseCurrency(item.dataProductColor[0].price)}</span></small></div>
                                     </div>
                                     <div class="col-sm-3 col-3 text-end">
-                                        <h6><span class="price">${item.dataProductColor[0].price * item.quantity}</span><span> đ</span></h6>
+                                        <h6><span class="price">${formatVietnameseCurrency(item.dataProductColor[0].price * item.quantity)}</span></h6>
                                     </div></div><hr />`;
+                        total = item.dataProductColor[0].price * item.quantity;
+                        totalCart += total;
                         $('.listItem').append(html);
                     })
-                    const prices = $('.price');
-                    prices.each(function(value, element) {
-                        total += +$(element).html();
-                    });
-                    totalPrice.append(total +" đ")
+                    totalPrice.append(formatVietnameseCurrency(total));
+
                     updateShippingDetails();
                 }
             })
