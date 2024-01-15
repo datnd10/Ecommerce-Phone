@@ -53,9 +53,9 @@
                             <div class="mb-3">
                                 <label for="shipping" class="form-label" style="font-weight: bold">Vận Chuyện</label>
                                 <select id="shipping" class="form-select" name="shipping">
-                                    <option value="1" class="3">Ship Thường (Nhận Hàng Sau 1 Tuần)</option>
-                                    <option value="2" class="4">Ship Nhanh (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</option>
-                                    <option value="3" class="5">Hỏa Tốc (Nhận Hàng Trong Khoảng 1 đến 3 ngày)</option>
+                                    <option value="1" class="30000">Ship Thường (Nhận Hàng Sau 1 Tuần)</option>
+                                    <option value="2" class="40000">Ship Nhanh (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</option>
+                                    <option value="3" class="50000">Hỏa Tốc (Nhận Hàng Trong Khoảng 1 đến 3 ngày)</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -129,6 +129,7 @@
                                 <div class="col-12">
                                     <strong>Tiền Hàng</strong>
                                     <span class="float-end" style="font-weight: bold"><span class="totalPrice"></span></span>
+                                    <input type="text" id="totalBuyPrice" value="" hidden="">
                                 </div>
                                 <div class="col-12">
                                     <strong>Tiền Ship</strong>
@@ -173,6 +174,7 @@
         const totalInput = $('input[name="total"]');
         const shipping = $('#shipping');
         const totalOrder = $('#totalOrder');
+        const totalBuyPrice = $('#totalBuyPrice');
         const totalPriceAndShip = $('.totalPriceAndShip');
 
         let totalCart = 0;
@@ -200,26 +202,27 @@
             $('.shipvalue').html(formatVietnameseCurrency(selectedOptionClassName));
             totalPriceAndShip.empty().append(formatVietnameseCurrency(totalCart + (+selectedOptionClassName)));
             totalInput.val(totalCart + (+selectedOptionClassName));
-            totalOrder.val(totalPriceAndShip.html());
+            totalOrder.val(totalCart + (+selectedOptionClassName));
         };
 
-        
+
 
         function init() {
-            $('#Name').val(decodedSessionValue.fullname);
-            $('#Phone').val(decodedSessionValue.phone);
-            $('#Address').val(decodedSessionValue.address);
-            $.ajax({
-                url: 'http://localhost:3000/database/controller/cartController.php',
-                type: 'GET',
-                data: {
-                    action: 'viewcart',
-                },
-                success: (response) => {
-                    let total = 0;
-                    let data = JSON.parse(response);
-                    data.forEach(function(item, currentIndex) {
-                        let html = `<div class="d-flex justify-content-between">
+            return new Promise((resolve, reject) => {
+                $('#Name').val(decodedSessionValue.fullname);
+                $('#Phone').val(decodedSessionValue.phone);
+                $('#Address').val(decodedSessionValue.address);
+                $.ajax({
+                    url: 'http://localhost:3000/database/controller/cartController.php',
+                    type: 'GET',
+                    data: {
+                        action: 'viewcart',
+                    },
+                    success: (response) => {
+                        let total = 0;
+                        let data = JSON.parse(response);
+                        data.forEach(function(item, currentIndex) {
+                            let html = `<div class="d-flex justify-content-between">
                                         <div class="col-sm-3 col-3">
                                         <img class="img-fluid" src="../../database/uploads/${item.dataProductImage[0].image}" />
                                     </div>
@@ -235,17 +238,19 @@
                                     <div class="col-sm-3 col-3 text-end">
                                         <h6><span class="price">${formatVietnameseCurrency(item.dataProductColor[0].price * item.quantity)}</span></h6>
                                     </div></div><hr />`;
-                        total = item.dataProductColor[0].price * item.quantity;
-                        totalCart += total;
-                        $('.listItem').append(html);
-                    })
-                    totalPrice.append(formatVietnameseCurrency(total));
-
-                    updateShippingDetails();
-                }
-            })
+                            total = item.dataProductColor[0].price * item.quantity;
+                            totalCart += total;
+                            $('.listItem').append(html);
+                        })
+                        totalBuyPrice.val(total)
+                        totalPrice.append(formatVietnameseCurrency(total));
+                        updateShippingDetails();
+                        resolve();
+                    }
+                })
+            });
         }
-        init();
+
         shipping.change(updateShippingDetails);
 
         var citis = document.getElementById("city");
@@ -319,7 +324,7 @@
             })
             $('#Address').val(newAddress);
         });
-
+        let checkBanking = true;
         $('.submitBtn').on('click', function() {
             function isEmpty(value) {
                 return value.trim() === '';
@@ -367,60 +372,19 @@
                             type: 'POST',
                             data: data,
                             success: (response) => {
-                                console.log(response);
                                 let result = JSON.parse(response);
                                 url = result.data;
-                                window.location.href = url;
-                                switch (response) {
-                                    case "success":
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: "Đặt Hàng Thành Công",
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.location.href = 'home.php';
-                                            }
-                                        })
-                                        break;
-                                    default:
-                                        Swal.fire({
-                                            title: 'Có gì đó sai sót',
-                                            icon: 'error',
-                                            confirmButtonText: 'OK',
-                                        })
-                                        break;
-                                }
-                            }
-                        })
-                        let url;
-                        $.ajax({
-                            url: 'http://localhost:3000/components/sendMail.php',
-                            type: 'POST',
-                            data: data,
-                            success: (response) => {
-                                console.log(response);
-                                switch (response) {
-                                    case "success":
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: "Đặt Hàng Thành Công",
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.location.href = 'home.php';
-                                            }
-                                        })
-                                        break;
-                                    default:
-                                        Swal.fire({
-                                            title: 'Có gì đó sai sót',
-                                            icon: 'error',
-                                            confirmButtonText: 'OK',
-                                        })
-                                        break;
-                                }
+                                console.log(url);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Mời Bạn Thanh Toán",
+                                }).then((result) => {
+                                    window.location.href = url;
+                                })
                             }
                         })
                     } else {
+                        data.payment_status = 'not paid';
                         $.ajax({
                             url: 'http://localhost:3000/components/sendMail.php',
                             type: 'POST',
@@ -453,6 +417,59 @@
                 }
             }
         })
+        init().then(() => {
+            var urlParams = new URLSearchParams(window.location.search);
+            var id = urlParams.get('vnp_TransactionStatus');
+            if (id == '00' && id != null) {
+                var total = urlParams.get('vnp_Amount');
+                var data = {
+                    id: decodedSessionValue.user_id,
+                    name: $('#Name').val(),
+                    phone: $('#Phone').val(),
+                    address: $('#Address').val(),
+                    shipping: (+total / 100) - totalBuyPrice.val(),
+                    message: $('#Message').val(),
+                    totalOrder: +total / 100,
+                    payment: "banking",
+                    payment_status: 'paid',
+                    action: 'checkout'
+                }
+                console.log(data);
+                $.ajax({
+                    url: 'http://localhost:3000/components/sendMail.php',
+                    type: 'POST',
+                    data: data,
+                    success: (response) => {
+                        console.log(response);
+                        switch (response) {
+                            case "success":
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Đặt Hàng Thành Công",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = 'home.php';
+                                    }
+                                })
+                                break;
+                            default:
+                                Swal.fire({
+                                    title: 'Có gì đó sai sót',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                })
+                                break;
+                        }
+                    }
+                })
+            }
+            if (id != '00' && id != null) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thanh Toán Thất Bại',
+                })
+            }
+        });
     </script>
 </body>
 

@@ -205,7 +205,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
     $message = $_POST['message'];
     $totalOrder  = $_POST['totalOrder'];
     $payment  = $_POST['payment'];
-    $status = "not paid";
+    $status = $_POST['payment_status'];
     $sqlOrder = "INSERT INTO `order` ( `total_money`, `name`, `address`, `phone`, `message`, `shipping`, `user_id`,`payment_method`,`payment_status`) VALUES ('$totalOrder','$name','$address','$phone','$message','$shipping','$user_id','$payment','$status')";
     $dataOrder = Query($sqlOrder, $connection);
     $sqlOrderId = "SELECT order_id,created_at FROM `order`  WHERE user_id = '$user_id' ORDER BY order_id DESC LIMIT 1;";

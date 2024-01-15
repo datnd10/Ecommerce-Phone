@@ -1,6 +1,10 @@
 <?php
     include '../config.php';
     
+
+    $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : null;
+    $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : null;
+
     $sql = "SELECT SUM(total_money) AS revenue
     FROM `order`
     WHERE status = 'received' AND YEARWEEK(created_at) = YEARWEEK(CURDATE())";
@@ -44,13 +48,35 @@
         ORDER BY date ASC";
     
     $dayOfWeek = Query($sql, $connection);
+    
+    $sql = "SELECT YEAR(created_at) AS year, SUM(total_money) AS total_revenue
+    FROM `order`
+    WHERE YEAR(created_at) BETWEEN 2024 AND 2030
+    GROUP BY YEAR(created_at);";
+    $totalOfYear = Query($sql, $connection);
 
+    $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, IFNULL(SUM(total_money), 0) AS revenue
+    FROM `order`
+    WHERE created_at BETWEEN '2024-01-01' AND '2024-12-31'
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    ORDER BY month";
+    $totalOfMonth = Query($sql, $connection);
+
+    $sql = "SELECT DATE(created_at) AS date, IFNULL(SUM(total_money), 0) AS revenue
+    FROM `order`
+    WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'
+    GROUP BY DATE(created_at)";
+    $totalOfDay = Query($sql, $connection);
+
+    
     $result = [
         'revenue' => $weekTotal[0]['revenue'],
         'total_order' => $totalOrder[0]['total_orders'],
         'total_user' => $totalUser[0]['total_users'],
         'total_report' => $totalReport,
-        'dayOfWeek' => $dayOfWeek
+        'totalOfYear'=> $totalOfYear,
+        'totalOfMonth' => $totalOfMonth,
+        'totalOfDay' => $totalOfDay
     ];
     echo json_encode($result);
 

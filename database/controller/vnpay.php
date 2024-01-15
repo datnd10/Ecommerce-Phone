@@ -4,7 +4,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
         $sqlOrderId = "SELECT order_id FROM `order`  ORDER BY order_id DESC LIMIT 1;";
         $dataOrderId = Query($sqlOrderId, $connection);
         $row = $dataOrderId[0];
-        $id = $row['order_id'] + 1;
+        $id = rand(00,999999);
         // error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
         // date_default_timezone_set('Asia/Ho_Chi_Minh');
 
@@ -19,7 +19,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
         $vnp_OrderInfo = 'Noi dung thanh toan';
         $vnp_OrderType = 'billpayment';
         // $vnp_Amount = $_POST['amount'] * 100;
-        $vnp_Amount = $_POST['totalOrder'] * 1000 * 100;
+        $vnp_Amount = $_POST['totalOrder'] * 100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = 'NCB';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
