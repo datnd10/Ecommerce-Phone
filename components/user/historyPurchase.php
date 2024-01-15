@@ -138,7 +138,7 @@
                                                     <span>${formatVietnameseCurrency(item.total_money)}</span>
                                                 </td>
                                                 <td>
-                                                    <span>Đã Thanh Toán</span>
+                                                    <span>${item.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
                                                 </td>
                                                 <td>
                                                     <span>${status}</span>
