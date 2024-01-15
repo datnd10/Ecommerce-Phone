@@ -51,7 +51,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'userGetOrderDetail') {
             od.quantity,
             p.product_name,
             pc.color,
-            pc.price,
+            od.price,
             pc.product_color_id,
             pi.image
         FROM 
@@ -108,7 +108,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'getOrderDetail') {
             od.quantity,
             p.product_name,
             pc.color,
-            pc.price,
+            od.price,
             pi.image
         FROM 
             order_detail od

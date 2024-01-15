@@ -226,14 +226,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
         $quantity = $row['quantity'];
         $sqlProductColor = "SELECT * FROM product_color WHERE product_color_id = '$product_color_id'";
         $dataProduct = Query($sqlProductColor, $connection);
+        $price = 0;
         foreach ($dataProduct as $row) {
+            $price = $row['price'];
             $quantityChange =  $row['quantity'] - $quantity;
             $quantitySold=  $row['sold_quantity'] + $quantity;
             $update = " UPDATE product_color SET quantity = '$quantityChange', sold_quantity = '$quantitySold' WHERE product_color_id = '$product_color_id'";
             $dataUpdate = Query($update, $connection);
         }
 
-        $updateOrderDetail = "INSERT INTO `order_detail` ( `order_id`, `product_color_id`, `quantity`) VALUES ('$orderId','$product_color_id','$quantity')";
+        $updateOrderDetail = "INSERT INTO `order_detail` ( `order_id`, `product_color_id`, `quantity`,`price`) VALUES ('$orderId','$product_color_id','$quantity','$price')";
         $dataOrderDetail = Query($updateOrderDetail, $connection);
 
         $deleteCart = "DELETE FROM cart WHERE user_id = '$user_id'";

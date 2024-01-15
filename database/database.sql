@@ -36,11 +36,6 @@ CREATE TABLE `cart` (
 --
 -- Dumping data for table `cart`
 --
-
-INSERT INTO `cart` (`user_id`, `product_color_id`, `quantity`) VALUES
-(13, 22, 1),
-(1, 22, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -90,15 +85,6 @@ CREATE TABLE `order` (
 -- Dumping data for table `order`
 --
 
-INSERT INTO `order` (`order_id`, `total_money`, `name`, `address`, `phone`, `message`, `payment_method`, `payment_status`, `created_at`, `status`, `shipping`, `user_id`) VALUES
-(2, 693, 'Nguyen Minh Duc', 'Hoa Binh, Xa Duc Hanh, Huyen Bao Lam, Tinh Cao Bang', '1234567890', 'Ship Chu Nhat', NULL, NULL, '2023-12-26 21:07:18', 'received', 3, 1),
-(3, 4005, 'Nguyen Minh Duc', 'Quang Ninh', '1234567890', 'Ship Chu Nhat', NULL, NULL, '2023-12-26 21:51:12', 'pending', 5, 1),
-(4, 2074, 'Nguyen Van A', '123 Ho Tay, Phuong Truc Bach, Quan Ba Dinh, Thanh pho Ha Noi', '0987654321', 'Ship Vao Chu Nhat', NULL, NULL, '2023-12-27 23:54:57', 'received', 4, 1),
-(5, 350, 'Nguyen Van A', 'kkk, Phuong Tran Phu, Thanh pho Ha Giang, Tinh Ha Giang', '0987654321', 'Ship Vao Chu Nhat', NULL, NULL, '2023-12-29 18:06:18', 'pending', 5, 1),
-(7, 8003, 'Nguyen Minh Duc3', 'Truong Cap 2 Mo Lao, Phuong Mo Lao, Quan Ha Dong, Thanh pho Ha Noi', '1234567190', '', NULL, NULL, '2024-01-03 16:28:02', 'pending', 3, 1),
-(8, 70010, 'Nguyen Minh Duc3', 'Truong Cap 2 Mo Lao, Phuong Mo Lao, Quan Ha Dong, Thanh pho Ha Noi', '1234567190', '', NULL, NULL, '2024-01-03 16:28:40', 'canceled', 3, 1),
-(9, 693, 'Dac Dat', 'Ha Noi', '1234509876', '', NULL, NULL, '2024-01-03 22:24:24', 'received', 3, 5);
-
 -- --------------------------------------------------------
 
 --
@@ -109,22 +95,14 @@ CREATE TABLE `order_detail` (
   `order_detail_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `product_color_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL
+  `quantity` int(11) NOT NULL,
+  `price` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order_detail`
 --
 
-INSERT INTO `order_detail` (`order_detail_id`, `order_id`, `product_color_id`, `quantity`) VALUES
-(1, 2, 14, 1),
-(2, 2, 22, 1),
-(3, 3, 8, 4),
-(4, 4, 14, 6),
-(5, 5, 14, 1),
-(8, 7, 8, 8),
-(9, 8, 23, 7),
-(10, 9, 22, 2);
 
 -- --------------------------------------------------------
 
@@ -227,10 +205,6 @@ CREATE TABLE `review` (
 -- Dumping data for table `review`
 --
 
-INSERT INTO `review` (`review_id`, `content`, `star`, `created_at`, `user_id`, `product_color_id`) VALUES
-(2, 'very good', 5, '2024-01-03 21:53:59', 1, 22),
-(3, 'very gôd', 5, '2024-01-03 22:24:54', 5, 22);
-
 -- --------------------------------------------------------
 
 --
@@ -246,14 +220,6 @@ CREATE TABLE `review_image` (
 --
 -- Dumping data for table `review_image`
 --
-
-INSERT INTO `review_image` (`review_image_id`, `image`, `review_id`) VALUES
-(1, 'P3B9uV4f1704293639.jpg', 2),
-(2, 'Mtm93V0e1704293639.jpg', 2),
-(3, 'V2ohVLBE1704293639.jpg', 2),
-(4, 'Z760qVBC1704293639.jpg', 2),
-(5, 'puvS3AEV1704295494.jpg', 3),
-(6, 'p6UwHFDU1704295494.jpg', 3);
 
 -- --------------------------------------------------------
 
@@ -281,15 +247,6 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `email`, `password`, `username`, `fullname`, `phone`, `address`, `avatar`, `role`, `created_at`, `token`, `status`) VALUES
-(1, 'ducn3m@gmail.com', 'duc123', 'ducnm123', 'Nguyen Minh Duc3', '1234567190', 'Truong Cap 2 Mo Lao, Phuong Mo Lao, Quan Ha Dong, Thanh pho Ha Noi', 'wmlWLK5g1703850690.jpg', 0, '2023-12-06 22:04:10', '', 0),
-(5, 'datnd@gmail.com', 'dat123', 'datnd19', 'Dac Dat', '1234509876', 'Ha Noi', 'lDXOYiOs1703262573.png', 0, '2023-12-22 00:56:48', '', 0),
-(8, 'cuongkeng@gmail.com', 'cuong123', 'cuong123', 'Dang CUong', '1235412781', 'Ha Noi', 'CcuIK3Dp1703849732.jpg', 1, '2023-12-23 00:10:59', '', 0),
-(9, 'dat123@gmail.com', 'dat123', 'datnh123', 'dat dat', '1234567890', 'Quang Ninh', 'guest.png', 1, '2024-01-02 23:25:36', '', 0),
-(10, 'datca123@gmail.com', 'dat123', 'cbhjascbhasj', 'dat dat', '0987612345', 'Quang Ninh', 'guest.png', 1, '2024-01-02 23:25:59', '', 0),
-(12, 'cas123@gmail.com', 'dat123', 'vbc', '', '1111111111', '', 'guest.png', 1, '2024-01-03 01:14:20', '', 0),
-(13, 'ca@gmail.com', 'dat123', 'cacsa', '', '9999999999', '', 'guest.png', 1, '2024-01-03 01:15:09', '', 0),
-(14, 'duc222nm@gmail.com', 'dat123', 'ducnm12331', '', '1234567090', '', 'guest.png', 1, '2024-01-03 01:15:51', '', 0);
 
 --
 -- Indexes for dumped tables
