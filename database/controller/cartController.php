@@ -1,5 +1,6 @@
 <?php
 include '../config.php';
+
 if (isset($_POST['action']) && $_POST['action'] == 'addTocart') {
     session_start();
     $jsonData = $_SESSION['account'];
@@ -12,6 +13,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'addTocart') {
         echo "sold Out";
         return;
     }
+
+
     $checkcart = "SELECT * FROM cart WHERE product_color_id = '$productColor' and user_id = '$user_id'; ";
     $data = Query($checkcart, $connection);
     if (count($data) == 0) {
@@ -21,6 +24,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'addTocart') {
         return;
     } else {
         $newQuantity = $data[0]['quantity'] + $quantity;
+        if($inventory < $newQuantity) {
+            $newQuantity = $inventory;
+        }
         $sqlUpdatecart = "UPDATE `cart` SET `quantity` = '$newQuantity' WHERE `user_id` = '$user_id' AND `product_color_id` = '$productColor'";
         $dataUpdatecart = Query($sqlUpdatecart, $connection);
         echo "success";

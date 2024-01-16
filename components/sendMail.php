@@ -206,6 +206,24 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
     $totalOrder  = $_POST['totalOrder'];
     $payment  = $_POST['payment'];
     $status = $_POST['payment_status'];
+
+    $sqlCart1 = "SELECT * FROM cart WHERE user_id = '$user_id'";
+    $dataCart1 = Query($sqlCart1, $connection);
+
+    foreach ($dataCart1 as $row) {
+        $product_color_id = $row['product_color_id'];
+        $quantity = $row['quantity'];
+        $sqlProductColor = "SELECT * FROM product_color WHERE product_color_id = '$product_color_id'";
+        $dataProduct = Query($sqlProductColor, $connection);
+        $row1 = $dataProduct[0];
+        $inventory = $row1['quantity'];
+        if ($quantity > $inventory) {
+            echo "failed";
+            return;
+        }
+    }
+
+
     $sqlOrder = "INSERT INTO `order` ( `total_money`, `name`, `address`, `phone`, `message`, `shipping`, `user_id`,`payment_method`,`payment_status`) VALUES ('$totalOrder','$name','$address','$phone','$message','$shipping','$user_id','$payment','$status')";
     $dataOrder = Query($sqlOrder, $connection);
     $sqlOrderId = "SELECT order_id,created_at FROM `order`  WHERE user_id = '$user_id' ORDER BY order_id DESC LIMIT 1;";

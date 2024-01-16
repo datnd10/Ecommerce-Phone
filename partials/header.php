@@ -1,3 +1,4 @@
+<?php header("Cache-Control: no-cache, no-store, must-revalidate"); ?>
 <style>
     .dropdown-menu a:hover {
         color: inherit !important;
@@ -6,9 +7,9 @@
         /* Optional: Remove underline on hover */
     }
 
-    .dropdown-toggle::after {
-        content: none;
-    }
+    .dropdown-toggle::after { 
+            content: none; 
+        } 
 </style>
 
 
@@ -19,18 +20,19 @@
             <a href="home.php"><img src="../../assets/images/hoha-logo.png" alt="Logo" style="height: 80px; width: 190px; object-fit: cover;"></a>
         </div>
         <div class="search col-md-6">
-            <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." style="padding: 10px 15px; width: 600px">
+            <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." style="padding: 10px 15px; width: 100%;">
         </div>
 
         <?php
         // Start the session
         session_start();
+        
         if (!isset($_SESSION['account'])) {
-            echo "<div class='user col-md-2 d-flex'>
-                    <i class='fa-solid fa-cart-shopping' style='font-size: 24px'></i>
-                    <a href='signIn.php'><button class='btn btn-success mr-3'>Đăng Nhập</button></a>
+            echo "<div class='user col-md-2 d-flex gap-2'>
+                    <a href='signIn.php'><button class='btn btn-success'>Đăng Nhập</button></a>
                     <a href='signup.php'><button class='btn btn-info'>Đăng Kí</button></a>
                 </div>";
+            $data = 'null';
         } else {
             $jsonData = $_SESSION['account'];
             $data = json_decode($jsonData, true);
@@ -43,7 +45,7 @@
                         <i class='mdi mdi-cart' style='font-size: 35px'></i>
                     </a>
                     <div class='dropdown'>
-                        <button class='btn dropdown-toggle d-flex align-items-center justify-content-center border border-secondary p-2' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        <button class='btn dropdown-toggle d-flex gap-3 align-items-center justify-content-center border border-secondary p-2' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                             <div class='username'>$username</div>
                             <img src='../../database/uploads/$image' style='width: 20px; height: 20px; border-radius: 50%' />
                         </button>

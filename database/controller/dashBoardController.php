@@ -27,45 +27,68 @@
     $totalReport = Query($sql, $connection);
 
 
-    $sql = "SELECT 
-        DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
-        IFNULL(SUM(total_money), 0) AS revenue_per_day
-        FROM (
-            SELECT 
-                created_at,
-                total_money
-            FROM `order`
-            WHERE status = 'received' AND YEARWEEK(created_at) = YEARWEEK(CURDATE())
-            UNION ALL
-            SELECT 
-                CURDATE() - INTERVAL (w + 1) DAY AS created_at,
-                0 AS total_money
-            FROM (
-                SELECT 0 w UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6
-            ) weeks
-        ) subquery
-        GROUP BY date
-        ORDER BY date ASC";
+    $sql = "WITH RECURSIVE YearRange AS (
+        SELECT '2023-01-01' AS start_date, '2023-01-01' + INTERVAL 1 YEAR AS end_date
+        UNION
+        SELECT end_date, end_date + INTERVAL 1 YEAR
+        FROM YearRange
+        WHERE end_date < '2030-01-01'
+    )
     
-    $dayOfWeek = Query($sql, $connection);
-    
-    $sql = "SELECT YEAR(created_at) AS year, SUM(total_money) AS total_revenue
-    FROM `order`
-    WHERE YEAR(created_at) BETWEEN 2024 AND 2030
-    GROUP BY YEAR(created_at);";
+    SELECT
+        DATE_FORMAT(YearRange.start_date, '%Y') AS order_year,
+        IFNULL(SUM(`order`.total_money), 0) AS total_revenue
+    FROM
+        YearRange
+    LEFT JOIN
+        `order` ON YEAR(`order`.created_at) = YEAR(YearRange.start_date) AND `order`.status = 'received'
+    GROUP BY
+        order_year
+    ORDER BY
+        order_year;
+    ";
     $totalOfYear = Query($sql, $connection);
 
-    $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, IFNULL(SUM(total_money), 0) AS revenue
-    FROM `order`
-    WHERE created_at BETWEEN '2024-01-01' AND '2024-12-31'
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-    ORDER BY month";
+    $sql = "WITH RECURSIVE MonthRange AS (
+        SELECT '2024-01-01' AS start_date, '2024-01-01' + INTERVAL 1 MONTH AS end_date
+        UNION
+        SELECT end_date, end_date + INTERVAL 1 MONTH
+        FROM MonthRange
+        WHERE end_date < '2024-12-01'
+    )
+    
+    SELECT
+        DATE_FORMAT(MonthRange.start_date, '%Y-%m') AS order_month,
+        IFNULL(SUM(`order`.total_money), 0) AS total_revenue
+    FROM
+        MonthRange
+    LEFT JOIN
+        `order` ON DATE_FORMAT(`order`.created_at, '%Y-%m') = DATE_FORMAT(MonthRange.start_date, '%Y-%m') AND `order`.status = 'received'
+    GROUP BY
+        order_month
+    ORDER BY
+        order_month;";
     $totalOfMonth = Query($sql, $connection);
 
-    $sql = "SELECT DATE(created_at) AS date, IFNULL(SUM(total_money), 0) AS revenue
-    FROM `order`
-    WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'
-    GROUP BY DATE(created_at)";
+    $sql = "WITH RECURSIVE DateRange AS (
+        SELECT '$startDate' AS start_date, '$startDate' + INTERVAL 1 DAY AS end_date
+        UNION
+        SELECT end_date, end_date + INTERVAL 1 DAY
+        FROM DateRange
+        WHERE end_date <= '$endDate'
+    )
+    
+    SELECT
+        DATE_FORMAT(DateRange.start_date, '%Y-%m-%d') AS order_date,
+        IFNULL(SUM(`order`.total_money), 0) AS total_revenue
+    FROM
+        DateRange
+    LEFT JOIN
+        `order` ON DATE(`order`.created_at) = DATE(DateRange.start_date) AND `order`.status = 'received'
+    GROUP BY
+        order_date
+    ORDER BY
+        order_date;";
     $totalOfDay = Query($sql, $connection);
 
     

@@ -76,14 +76,16 @@
                                             </select>
                                         </div>
                                         <div class="form-group d-flex gap-5 justify-content-between align-items-center d-none filterDay">
-                                            <input type="date" class="form-control" id="startDate" name="trip-start" />
-                                            <input type="date" class="form-control" id="endDate" name="trip-start" />
+                                            <input type="date" class="form-control" id="startDate" name="trip-start" style="height: 20px;"/>
+                                            <input type="date" class="form-control" id="endDate" name="trip-start" style="height: 20px;" />
                                         </div>
                                         <div>
                                             <button class="btn btn-primary searchBtn">Tìm Kiếm</button>
                                         </div>
                                     </div>
-                                    <canvas id="barChart" class="mt-4"></canvas>
+                                    <div id="spanChart">
+                                        <canvas id="barChart" class="mt-4"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +93,9 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h4 class="card-title">Trạng thái đơn hàng</h4>
-                                    <canvas id="traffic-chart"></canvas>
+                                    <div id="trafficChart">
+                                        <canvas id="traffic-chart"></canvas>
+                                    </div>
                                     <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>
                                 </div>
                             </div>
@@ -150,7 +154,6 @@
                     endDate: $('#endDate').val()
                 },
                 success: (response) => {
-                    $("#barChart").empty();
                     let data = JSON.parse(response)
                     console.log(data);
                     $('.revenue').html(formatVietnameseCurrency(data.revenue))
@@ -164,18 +167,19 @@
                     const endDate = $('#endDate').val();
                     let label;
                     let dataMoney;
+
                     if (action === 'day') {
-                        label = data.totalOfDay.map(item => item.date);
-                        dataMoney = data.totalOfDay.map(item => item.revenue);
+                        label = data.totalOfDay.map(item => item.order_date);
+                        dataMoney = data.totalOfDay.map(item => item.total_revenue);
                     }
 
                     if (action === 'month') {
-                        label = data.totalOfMonth.map(item => item.month);
-                        dataMoney = data.totalOfMonth.map(item => item.revenue);
+                        label = data.totalOfMonth.map(item => item.order_month);
+                        dataMoney = data.totalOfMonth.map(item => item.total_revenue);
                     }
 
                     if (action === 'year') {
-                        label = data.totalOfYear.map(item => item.year);
+                        label = data.totalOfYear.map(item => item.order_year);
                         dataMoney = data.totalOfYear.map(item => item.total_revenue);
                     }
 
@@ -210,6 +214,8 @@
                         }
                     };
 
+                    $('#spanChart').empty();
+                    $('#spanChart').append('<canvas id="barChart" class="mt-4"></canvas>');
                     if ($("#barChart").length) {
                         var barChartCanvas = $("#barChart").get(0).getContext("2d");
                         // This will get the first returned node in the jQuery collection.
@@ -221,6 +227,9 @@
                     }
                     $("#barChart").html(barChart.generateLegend());
 
+
+                    $('#trafficChart').empty();
+                    $('#trafficChart').append('<canvas id="traffic-chart"></canvas>');
 
                     if ($("#traffic-chart").length) {
                         var ctx = document.getElementById('traffic-chart').getContext("2d");

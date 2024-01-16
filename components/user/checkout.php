@@ -21,6 +21,14 @@
 
 <body>
     <?php include '../../partials/header.php' ?>
+    <?php
+    if ($data == 'null') {
+        // Chuyển hướng đến trang cụ thể nếu $data là null
+        header('Location: signIn.php');
+        exit(); // Đảm bảo dừng việc thực thi mã sau lệnh header
+    }
+    ?>
+
     <div class="container">
         <div class="row cart-body p-5 bg-white mt-3">
             <form class="d-flex row w-100" id="checkOutForm">
@@ -372,15 +380,25 @@
                             type: 'POST',
                             data: data,
                             success: (response) => {
-                                let result = JSON.parse(response);
-                                url = result.data;
-                                console.log(url);
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: "Mời Bạn Thanh Toán",
-                                }).then((result) => {
-                                    window.location.href = url;
-                                })
+                                console.log(response);
+                                switch (response) {
+                                    case "failed":
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: "Một trong số sản phẩm của bạn không đủ số lượng",
+                                        })
+                                        break;
+                                    default:
+                                        let result = JSON.parse(response);
+                                        url = result.data;
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: "Mời Bạn Thanh Toán",
+                                        }).then((result) => {
+                                            window.location.href = url;
+                                        })
+                                        break;
+                                }
                             }
                         })
                     } else {
@@ -404,7 +422,7 @@
                                         break;
                                     default:
                                         Swal.fire({
-                                            title: 'Có gì đó sai sót',
+                                            title: 'Một trong số sản phẩm của bạn không đủ số lượng',
                                             icon: 'error',
                                             confirmButtonText: 'OK',
                                         })

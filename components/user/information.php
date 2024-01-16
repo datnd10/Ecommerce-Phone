@@ -54,6 +54,13 @@
 
 <body>
     <?php include '../../partials/header.php' ?>
+    <?php
+    if ($data == 'null') {
+        // Chuyển hướng đến trang cụ thể nếu $data là null
+        header('Location: signIn.php');
+        exit(); // Đảm bảo dừng việc thực thi mã sau lệnh header
+    } 
+    ?>
     <div class="mt-5">
         <div class="container my-5 clearfix">
             <!-- Shopping cart table -->

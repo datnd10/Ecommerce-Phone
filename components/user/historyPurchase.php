@@ -26,6 +26,13 @@
 
 <body>
     <?php include '../../partials/header.php' ?>
+    <?php
+    if ($data == 'null') {
+        // Chuyển hướng đến trang cụ thể nếu $data là null
+        header('Location: signIn.php');
+        exit(); // Đảm bảo dừng việc thực thi mã sau lệnh header
+    } 
+    ?>
     <div class="container" style="min-height: 64vh">
         <div class="row cart-body p-5 bg-white mt-3 border">
             <div class="col-md-12">

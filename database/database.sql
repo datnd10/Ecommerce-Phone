@@ -54,12 +54,6 @@ CREATE TABLE `category` (
 -- Dumping data for table `category`
 --
 
-INSERT INTO `category` (`category_id`, `category_name`, `description`, `created_at`) VALUES
-(1, 'iphone', 'tốt', '2023-12-06 22:04:25'),
-(2, 'xiaomi', 'trung quốc1', '2023-12-06 22:27:04'),
-(3, 'samsung', 'hàn quốc', '2023-12-06 22:27:12'),
-(6, 'cacsa', 'csa', '2023-12-24 01:16:37');
-
 -- --------------------------------------------------------
 
 --
@@ -122,14 +116,6 @@ CREATE TABLE `product` (
 
 --
 -- Dumping data for table `product`
---
-
-INSERT INTO `product` (`product_id`, `product_name`, `description`, `rate`, `created_at`, `category_id`) VALUES
-(1, 'Iphone 15', 'Good', 0, '2023-12-06 22:04:38', 1),
-(2, 'xiaomi 13t pro 5g', '12', 0, '2023-12-06 22:41:53', 2),
-(3, 'samsung galaxy z flip 5g', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit\r\n', 0, '2023-12-06 22:42:06', 3),
-(4, 'iphone 14', 'good', 0, '2023-12-06 22:47:57', 1),
-(10, 'cá', 'csa', 0, '2023-12-24 01:16:45', 6);
 
 -- --------------------------------------------------------
 
@@ -151,14 +137,6 @@ CREATE TABLE `product_color` (
 --
 -- Dumping data for table `product_color`
 --
-
-INSERT INTO `product_color` (`product_color_id`, `color`, `quantity`, `price`, `sold_quantity`, `created_at`, `product_id`) VALUES
-(8, 'black', 90, 1000, 8, '2023-12-06 23:58:46', 4),
-(14, 'black', 11, 345, 1, '2023-12-07 00:13:45', 2),
-(21, 'green', 0, 123, 0, '2023-12-07 22:06:25', 3),
-(22, 'purple', 16, 345, 2, '2023-12-07 22:08:37', 3),
-(23, 'pink', 32, 10001, 0, '2023-12-12 19:26:17', 4);
-
 -- --------------------------------------------------------
 
 --
@@ -174,17 +152,6 @@ CREATE TABLE `product_image` (
 --
 -- Dumping data for table `product_image`
 --
-
-INSERT INTO `product_image` (`product_image_id`, `image`, `product_color_id`) VALUES
-(65, 'Vmm3NLMH1703086895.jfif', 23),
-(66, 'XjzbD2X41703086895.jfif', 23),
-(69, 'CnZm3Xo71703086919.jfif', 21),
-(70, '5gyHzXvO1703086919.jfif', 21),
-(75, 'kpEKU9871703436890.png', 22),
-(76, '9WnSr35Z1703436890.jfif', 22),
-(96, 'TRoAlwKd1703507941.jpg', 8),
-(97, '3akHMEUg1703507941.jfif', 8),
-(98, 'OIpuVWRa1703510510.jfif', 14);
 
 -- --------------------------------------------------------
 

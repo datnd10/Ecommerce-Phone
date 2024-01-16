@@ -89,6 +89,7 @@
         .icon-hover:hover i {
             color: #3b71ca !important;
         }
+
         #images,
         #imagesUpdate {
             width: 90%;
@@ -104,7 +105,6 @@
             height: 200px;
             object-fit: cover;
         }
-        
     </style>
 </head>
 
@@ -189,52 +189,52 @@
                 </div>
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Đánh Giá Đơn Hàng</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="main">
-                                    <input type="number" class="form-control productId" id="productColorId" name="productColorId" hidden="">
-                                    <div class="form-group row">
-                                        <div class="col-sm-3 col-3">
-                                            <img class="img-fluid image" id="myImage" src="" style="width: 150px;height: 150px; object-fit: cover;" />
-                                        </div>
-
-                                        <div class="col-sm-6 col-6 text-left">
-                                            <div class="col-12"><span>Tên Sản Phẩm: </span><span class="productName"></span></div>
-                                            <div class="col-12 mt-3"><span>Màu: </span><span class="color"></span></div>
-                                            <div class="col-12 mt-3"><span>Giá: </span><span class="price"></span></div>
-                                        </div>
-
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Đánh Giá Đơn Hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="main">
+                                <input type="number" class="form-control productId" id="productColorId" name="productColorId" hidden="">
+                                <div class="form-group row">
+                                    <div class="col-sm-3 col-3">
+                                        <img class="img-fluid image" id="myImage" src="" style="width: 150px;height: 150px; object-fit: cover;" />
                                     </div>
-                                    <div class="form-group col-md-6 text-left mb-5">
-                                        <label for="star" style="font-weight: bold; display: block">Star</label>
-                                        <div class="rating">
 
-                                        </div>
+                                    <div class="col-sm-6 col-6 text-left">
+                                        <div class="col-12"><span>Tên Sản Phẩm: </span><span class="productName"></span></div>
+                                        <div class="col-12 mt-3"><span>Màu: </span><span class="color"></span></div>
+                                        <div class="col-12 mt-3"><span>Giá: </span><span class="price"></span></div>
                                     </div>
-                                    <div class="form-group col-md-12 text-left">
-                                        <label for="description" style="font-weight: bold">Description</label>
-                                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
-                                    </div>
-                                    <div class="upload col-md-12">
-                                    <div class="d-flex  align-items-center mb-4">
-                                            <input type="file" id="file-input" accept="image/png, image/jpeg" onchange="preview()" multiple>    
-                                        </div>
-                                        <div id="images"></div>
+
+                                </div>
+                                <div class="form-group col-md-6 text-left mb-5">
+                                    <label for="star" style="font-weight: bold; display: block">Star</label>
+                                    <div class="rating">
+
                                     </div>
                                 </div>
+                                <div class="form-group col-md-12 text-left">
+                                    <label for="description" style="font-weight: bold">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                                </div>
+                                <div class="upload col-md-12">
+                                    <div class="d-flex  align-items-center mb-4">
+                                        <input type="file" id="file-input" accept="image/png, image/jpeg" onchange="preview()" multiple>
+                                    </div>
+                                    <div id="images"></div>
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <!-- <button type="button" class="btn btn-primary updateBtn">Lưu</button> -->
-                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <!-- <button type="button" class="btn btn-primary updateBtn">Lưu</button> -->
                         </div>
                     </div>
                 </div>
+            </div>
             <hr>
         </div>
     </div>
@@ -259,6 +259,7 @@
     <!-- End custom js for this page -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        const account = <?php echo json_encode($data); ?>;
         function preview(fileInput, imageContainer, numOfFiles) {
             imageContainer.empty();
             numOfFiles.text(`${fileInput[0].files.length} Files Selected`);
@@ -274,7 +275,7 @@
                 reader.onload = () => {
                     let img = $("<img>");
                     img.attr("src", reader.result);
-                    img.addClass("image_review"); 
+                    img.addClass("image_review");
                     figure.prepend(img);
                 }
 
@@ -291,8 +292,6 @@
             preview(fileInput, imageContainer, numOfFiles);
         });
 
-        const sessionValue = <?php echo json_encode($_SESSION['account']); ?>;
-        const account = JSON.parse(sessionValue);
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
 
@@ -323,6 +322,7 @@
                 },
                 success: (response) => {
                     let data = JSON.parse(response);
+                    console.log(data);
                     const mainImage = document.querySelector('.mainImage');
                     mainImage.src = `/database/uploads/${data.productImage[0][0].image}`;
                     const listImage = document.querySelector('.list-img');
@@ -511,45 +511,50 @@
                     });
                     const submitBtn = document.querySelector("#submitBtn");
                     submitBtn.onclick = function() {
-                        if (document.querySelector('.status').innerHTML == 'Sold out') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: "Product is sold out",
-                                confirmButtonText: 'OK',
-                            })
+                        if (account == 'null') {
+                            window.location.href = 'http://localhost:3000/components/user/signIn.php';
                         } else {
-                            const data = new FormData();
-                            data.append('productColor', $('.color.active').attr('name'));
-                            console.log($('.color.active').attr('name'));
-                            console.log($('#quantity').val());
-                            console.log($('#inventory').val());
-                            data.append('quantity', $('#quantity').val());
-                            data.append('inventory', $('#inventory').val());
-                            data.append('action', 'addTocart');
-                            $.ajax({
-                                url: 'http://localhost:3000/database/controller/cartController.php',
-                                type: 'POST',
-                                data: data,
-                                contentType: false,
-                                processData: false,
-                                success: (response) => {
-                                    switch (response) {
-                                        case "success":
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: "Thêm vào giỏ hàng thành công",
-                                                confirmButtonText: 'OK',
-                                            })
-                                            break;
-                                        default:
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: "Sản phẩm đã bán hết.",
-                                                confirmButtonText: 'OK',
-                                            })
+                            if (document.querySelector('.status').innerHTML == 'Sold out') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: "Product is sold out",
+                                    confirmButtonText: 'OK',
+                                })
+                            } else {
+                                const data = new FormData();
+                                data.append('productColor', $('.color.active').attr('name'));
+                                console.log($('.color.active').attr('name'));
+                                console.log($('#quantity').val());
+                                console.log($('#inventory').val());
+                                data.append('quantity', $('#quantity').val());
+                                data.append('inventory', $('#inventory').val());
+                                data.append('action', 'addTocart');
+                                $.ajax({
+                                    url: 'http://localhost:3000/database/controller/cartController.php',
+                                    type: 'POST',
+                                    data: data,
+                                    contentType: false,
+                                    processData: false,
+                                    success: (response) => {
+                                        console.log(123);
+                                        switch (response) {
+                                            case "success":
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: "Thêm vào giỏ hàng thành công",
+                                                    confirmButtonText: 'OK',
+                                                })
+                                                break;
+                                            default:
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: "Sản phẩm đã bán hết.",
+                                                    confirmButtonText: 'OK',
+                                                })
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
                 }
@@ -587,7 +592,7 @@
         //                                     <input type="radio" name="rating" value="1" id="1" class="ratingStar"><label for="1">☆</label>
         //                                 </div>
         //                             </div>`;
-                      
+
         //             $('.productName').append(data.data[0].product_name)
         //             $('.color').append(color);
         //             $('.price').html("$ " + data.data[0].price)
@@ -658,10 +663,6 @@
             });
         }
         getReview(productId);
-
-
-        
-
     </script>
 </body>
 

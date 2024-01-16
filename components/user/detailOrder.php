@@ -14,6 +14,7 @@
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/order.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../../assets/images/favicon.ico" />
     <style>
@@ -112,6 +113,13 @@
 
 <body>
     <?php include '../../partials/header.php' ?>
+    <?php
+    if ($data == 'null') {
+        // Chuyển hướng đến trang cụ thể nếu $data là null
+        header('Location: signIn.php');
+        exit(); // Đảm bảo dừng việc thực thi mã sau lệnh header
+    } 
+    ?>
     <div class="container">
         <div class="sherah-dsinner">
             <div class="sherah-page-inner sherah-border sherah-default-bg mg-top-25">
@@ -150,6 +158,42 @@
                                     </li>
                                 </ul>
                             </div>
+                            <div class="main">
+                                    <ul class="head">
+                                        <li class="step step-1">
+                                            <i class="icon uil mdi mdi-cellphone-iphone" style="color: rgb(45, 194, 88);"></i>
+                                            <div class="linebar one active">
+                                                <i class="mdi mdi-check"></i>
+                                            </div>
+                                            <p class="text" style="color: rgb(45, 194, 88);">Đang Duyệt</p>
+                                        </li>
+                                        <li class="step step-2">
+                                            <i class="icon uil mdi mdi-file-document"></i>
+                                            <div class="linebar two">
+                                                <i class="mdi mdi-check"></i>
+                                            </div>
+                                            <p class="text">Xác Nhận</p>
+                                        </li>
+                                        <li class="step step-3">
+                                            <i class="icon uil mdi mdi-truck-delivery"></i>
+                                            <div class="linebar three">
+                                                <i class="mdi mdi-check"></i>
+                                            </div>
+                                            <p class="text">Đang Ship</p>
+                                        </li>
+                                        <li class="step step-4">
+                                            <i class="icon uil mdi mdi-check-circle"></i>
+                                            <div class="linebar four">
+                                                <i class="mdi mdi-check"></i>
+                                            </div>
+                                            <p class="text">Nhận Hàng</p>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="head-2 d-none">
+                                        <h2 style="color: red;">Đã Hủy</h2>
+                                    </ul>
+                                </div>
                         </div>
                     </div>
                     <!-- </div> -->
