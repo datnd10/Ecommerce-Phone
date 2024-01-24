@@ -237,7 +237,7 @@
                             <div class="modal-body">
                                 <input type="text" class="form-control" id="orderId" hidden>
                                 <input type="text" class="form-control" id="status" hidden value='pending'>
-                                <div class="main">
+                                <div>
                                     <input type="number" class="form-control productId" id="productColorId" name="productColorId" hidden="">
                                     <div class="form-group row">
                                         <div class="col-sm-3 col-3">
@@ -312,6 +312,40 @@
         const sessionValue = <?php echo json_encode($_SESSION['account']); ?>;
         const decodedSessionValue = JSON.parse(sessionValue)[0];
 
+        const steps = $('.step');
+
+        function activateStep(stepIndex) {
+            steps.each(function(index) {
+                const currentStep = $(`.step-${index + 1}`);
+                if (currentStep.length) {
+                    const isCurrent = index <= stepIndex;
+                    currentStep.find('.icon').css('color', isCurrent ? 'rgb(45, 194, 88)' : '');
+                    currentStep.find('.text').css('color', isCurrent ? 'rgb(45, 194, 88)' : '');
+                }
+
+            });
+            switch (stepIndex) {
+                case 0:
+                    $('#status').val('pending');
+                    break;
+                case 1:
+                    $('#status').val('approved');
+                    break;
+                case 2:
+                    $('#status').val('shipping');
+                    break;
+                case 3:
+                    $('#status').val('received');
+                    break;
+                default:
+                    $('#status').val('Trạng thái không xác định');
+            }
+            const linebars = $('.linebar');
+            linebars.each(function(index) {
+                $(this).toggleClass('active', index <= stepIndex);
+            });
+        }
+
         const handelReview = (id) => {
             $.ajax({
                 url: 'http://localhost:3000/database/controller/reviewController.php',
@@ -325,7 +359,7 @@
                     console.log(data.product_color_id);
                     $('#productColorId').val(data.product_color_id);
                     $('.productName').html(data.product_name);
-                    $('.price').html('$' + data.price);
+                    $('.price').html(formatVietnameseCurrency(data.price));
                     $('.color').html(data.color);
                     console.log(`../../database/uploads/${data.image}`);
                     $(".image").attr("src", `../../database/uploads/${data.image}`);
@@ -413,6 +447,35 @@
                             totalPrice += +item.quantity * +item.price;
                             $('.bodyTable').append(html);
                         })
+                        switch (data.information[0].status) {  
+                            case 'pending':
+                                $(".head").removeClass("d-none");
+                                $(".head-2").addClass("d-none")
+                                activateStep(0);
+                                break;
+                            case 'approved':
+                                $(".head").removeClass("d-none");
+                                $(".head-2").addClass("d-none")
+                                activateStep(1);
+                                break;
+                            case 'shipping':
+                                $(".head").removeClass("d-none");
+                                $(".head-2").addClass("d-none")
+                                activateStep(2);
+                                break;
+                            case 'received':
+                                $(".head").removeClass("d-none");
+                                $(".head-2").addClass("d-none")
+                                activateStep(3);
+                                break;
+                            case 'canceled':
+                                $(".head").addClass("d-none")
+                                $(".head-2").removeClass("d-none")
+                                break;
+                            default:
+                                status = 'Trạng thái không xác định';
+                                break;
+                        }
                         $('.totalPrice').html(formatVietnameseCurrency(totalPrice));
                         $('.shipvalue').html(formatVietnameseCurrency(data.information[0].shipping));
                         $('.totalPriceAndShip').html(formatVietnameseCurrency(data.information[0].total_money));

@@ -213,7 +213,7 @@
                             </label>
                         </div>
                         <hr />
-                        <input type="button" id="filterBtn" value="Lọc" class="btn btn-primary" style="width: 155px">
+                        <input type="button" id="filterBtn" value="Lọc" class="btn btn-primary" style="width: 100%">
                     </form>
                 </div>
 

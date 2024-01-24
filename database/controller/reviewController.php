@@ -125,6 +125,7 @@ WHERE
 
 if (isset($_GET['action']) && $_GET['action'] == 'getAllReview') {
     $sql = "SELECT
+    r.review_id AS review_id,
     c.category_name AS category_name,
     p.product_name AS product_name,
     pc.color AS product_color,

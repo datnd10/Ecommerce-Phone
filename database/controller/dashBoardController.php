@@ -7,12 +7,11 @@
 
     $sql = "SELECT SUM(total_money) AS revenue
     FROM `order`
-    WHERE status = 'received' AND YEARWEEK(created_at) = YEARWEEK(CURDATE())";
+    WHERE status = 'received'";
     $weekTotal = Query($sql, $connection);
 
     $sql = "SELECT COUNT(*) AS total_orders
-    FROM `order`
-    WHERE status = 'received' AND YEARWEEK(created_at) = YEARWEEK(CURDATE())";
+    FROM `order`";
     $totalOrder = Query($sql, $connection);
 
     $sql = "SELECT COUNT(*) AS total_users

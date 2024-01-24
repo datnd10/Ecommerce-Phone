@@ -105,6 +105,33 @@
             height: 200px;
             object-fit: cover;
         }
+
+        .image-gallery {
+            width: 100%;
+            /* Adjust the width as needed */
+            overflow-x: scroll;
+            white-space: nowrap;
+        }
+
+        .list-img img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            display: inline-block;
+        }
+
+        /* Optional: Add some styling for scrollbar */
+        .image-gallery::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .image-gallery::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        .image-gallery::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 
@@ -125,8 +152,10 @@
                             <img src="images/iphone14black1.jpg" class="mainImage" />
                         </div>
                     </div>
-                    <div class="list-img mt-3">
+                    <div class="image-gallery">
+                        <div class="list-img mt-3">
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -158,10 +187,9 @@
             </div>
             <div class="col-md-3">
                 <div class="mt-3">
-                    <div><strong>Chuyển phát nhanh:</strong> 2 - 4 ngày</div>
-                    <div><strong>Vận chuyển địa phương:</strong> tối đa một tuần, $19,00</div>
-                    <div><strong>Vận chuyển mặt đất của UPS:</strong> 4 - 6 ngày, $29,00</div>
-                    <div><strong>Unishop Xuất Khẩu Toàn Cầu:</strong> 3 - 4 ngày, $39,00</div>
+                    <div><strong>Chuyển phát thường</strong> (Nhận Hàng Sau 1 Tuần)</div>
+                    <div><strong>Chuyển phát nhanh</strong> (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</div>
+                    <div><strong>Chuyển phát hỏa tốc</strong> (Nhận Hàng Trong Khoảng 1 đến 3 ngày)</div>
                 </div>
             </div>
         </div>
@@ -260,6 +288,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const account = <?php echo json_encode($data); ?>;
+
         function preview(fileInput, imageContainer, numOfFiles) {
             imageContainer.empty();
             numOfFiles.text(`${fileInput[0].files.length} Files Selected`);
@@ -347,8 +376,14 @@
                     <div class="d-flex flex-row my-3">
                         <div class="text-warning mb-1 me-2">`
                     for (var i = 0; i < data.product[0].rate; i++) {
-                        console.log(1);
                         htmlRightSide += `<i class="mdi mdi-star" style="color: #FA8232"></i>`;
+                    }
+                    var paragraphs = data.product[0].description.split("\n");
+                    var formattedText = "";
+                    for (var i = 0; i < paragraphs.length; i++) {
+                        if (paragraphs[i].trim() !== "") {
+                            formattedText += "<p>" + paragraphs[i] + "</p>";
+                        }
                     }
 
                     // Loop to add empty stars for the remaining
@@ -382,7 +417,7 @@
                         ${listPriceProduct}
                     </div>
                     <p>
-                    ${data.product[0].description}
+                    ${formattedText}
                     </p>
                     <div class="row">
                         <dt class="col-4">Hãng Sản Phẩm:</dt>
@@ -393,7 +428,7 @@
 
                 <div class="d-flex align-items-center mt-4">
                     <div style="font-size: 20px;font-weight: bold; margin-right: 50px">Màu:</div>
-                    <div class="list-color">
+                    <div class="list-color d-flex gap-2 flex-wrap">
                         ${listcolor}
                     </div>
                 </div>
@@ -414,7 +449,7 @@
                 </div>`
                     rightSide.innerHTML = htmlRightSide;
                     const description = document.querySelector('.description');
-                    description.innerHTML = data.product[0].description;
+                    description.innerHTML = formattedText;
                     const listImg = document.querySelectorAll(".list-img span");
                     const img = document.querySelector(".img-wrap img");
                     const prevBtn = document.querySelector(".prev");
@@ -642,7 +677,7 @@
                             html += `<i class="mdi mdi-star-outline"></i>`;
                         }
                         html += `</div>
-                                    <p class="review-date" style="color: rgba(0,0,0,.54);width: 200px">${item.created_at} | ${item.color}</p>
+                                    <p class="review-date" style="color: rgba(0,0,0,.54);width: 300px">${item.created_at} | ${item.color}</p>
                                 </div>
                    
                             </div>

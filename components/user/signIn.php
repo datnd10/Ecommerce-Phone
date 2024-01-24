@@ -82,7 +82,7 @@
                         </div>
 
                         <div class="text-center text-lg-start mt-4 pt-2">
-                            <button type="button" class="btn btn-primary btn-lg signInBtn" style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                            <button type="button" class="btn btn-primary btn-lg signInBtn" style="padding-left: 2.5rem; padding-right: 2.5rem;">Đăng Nhập</button>
                             <p class="small fw-bold mt-2 pt-1 mb-0">Chưa Có Tài Khoản? <a href="signUp.php" class="link-danger">Đăng Kí</a></p>
                         </div>
                     </form>

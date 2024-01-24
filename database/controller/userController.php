@@ -4,6 +4,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'view') {
     $sql = "SELECT u.*, COUNT(o.order_id) AS total_orders, SUM(CASE WHEN o.status = 'reviewed' OR o.status = 'received' THEN o.total_money ELSE 0 END) AS total_amount
     FROM user AS u
     LEFT JOIN `order` AS o ON u.user_id = o.user_id
+    WHERE u.status = 1
     GROUP BY u.user_id";
     $data = Query($sql, $connection);
     $output = '';

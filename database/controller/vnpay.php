@@ -29,8 +29,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'checkout') {
 
     $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     $vnp_Returnurl = "http://localhost:3000/components/user/checkout.php";
-    $vnp_TmnCode = "E5NXPOKV"; //Mã website tại VNPAY 
-    $vnp_HashSecret = "VXJBXFKFXJVCJZFSMFQZOFWLCXILIVBV"; //Chuỗi bí mật
+    $vnp_TmnCode = "TNZ7KSOA"; //Mã website tại VNPAY 
+    $vnp_HashSecret = "IMJVBGWAFUWXELYAMKFYJLVZHFVKUUTD"; //Chuỗi bí mật
 
     $vnp_TxnRef = $id; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
     // $vnp_TxnRef = $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY

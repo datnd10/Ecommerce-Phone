@@ -183,7 +183,7 @@
                     } else {
                         $('.bodyTable').empty();
                         data.forEach(function(item) {
-                            console.log(item);
+                            console.log(item.description);
                             const filledStars = Array.from({length: item.average_rating}, () => '<i class="mdi mdi-star" style="color: #FA8232"></i>');
                             const emptyStars = Array.from({length: 5 - item.average_rating}, () => '<i class="mdi mdi-star"></i>');
                             const starsHtml = filledStars.concat(emptyStars).join('');

@@ -19,7 +19,7 @@ function sendEmail($toEmail, $toName, $subject, $body)
         $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
         $mail->Username   = 'datndhe172134@fpt.edu.vn';                     //SMTP username
-        $mail->Password   = 'uwti xoti lrev meil';                               //SMTP password
+        $mail->Password   = 'sitk vdkj qxoa duhw';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
@@ -134,6 +134,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'refreshToken') {
     if (sendEmail($toEmail, $toName, $subject, $body)) {
         echo 'success';
     } else {
+        echo 1;
         echo 'failed';
     }
 }
@@ -356,7 +357,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete') {
 if (isset($_POST['action']) && $_POST['action'] == 'updateStatus') {
     $order_id = $_POST['id'];
     $status = $_POST['status'];
-    $sql = "UPDATE `order` SET `status` = '$status', `payment_status` = 'paid' WHERE `order_id` = $order_id;";
+    $sql = "";
+    if($status == "received"){
+        $sql = "UPDATE `order` SET `status` = '$status', `payment_status` = 'paid' WHERE `order_id` = $order_id;";
+    }
+    else {
+        $sql = "UPDATE `order` SET `status` = '$status',`payment_status` = 'not paid' WHERE `order_id` = $order_id;";
+    }
     $data = Query($sql, $connection);
     if ($status == 'received') {
         $sqlUser = "SELECT user.email,user.username, `order`.* FROM `user` JOIN `order` ON `user`.user_id = `order`.user_id WHERE `order`.order_id = $order_id;";

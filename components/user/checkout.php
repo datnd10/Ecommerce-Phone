@@ -61,9 +61,9 @@
                             <div class="mb-3">
                                 <label for="shipping" class="form-label" style="font-weight: bold">Vận Chuyện</label>
                                 <select id="shipping" class="form-select" name="shipping">
-                                    <option value="1" class="20000">Ship Thường (Nhận Hàng Sau 1 Tuần)</option>
-                                    <option value="2" class="25000">Ship Nhanh (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</option>
-                                    <option value="3" class="30000">Hỏa Tốc (Nhận Hàng Trong Khoảng 1 đến 3 ngày)</option>
+                                    <option value="1" class="20000">Chuyển phát thường (Nhận Hàng Sau 1 Tuần)</option>
+                                    <option value="2" class="25000">Chuyển phát nhanh (Nhận Hàng Trong Khoảng 4 đến 6 ngày)</option>
+                                    <option value="3" class="30000">Chuyển phát hỏa tốc (Nhận Hàng Trong Khoảng 1 đến 3 ngày)</option>
                                 </select>
                             </div>
                             <div class="mb-3">
